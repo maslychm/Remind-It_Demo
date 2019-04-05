@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Remind-It_Demo</string>
+    <string name="welcome">Welcome to Remind-It!</string>
+    <string name="start">Get Started!</string>
+    <string name="loginPage">Enter login credentials:</string>
+    <string name="registerPage">Register with below fields</string>
+    <string name="goToRegister">Go to register</string>
+    <string name="registerButton">Register</string>
+    <string name="goToLogin">Go to login</string>
+    <string name="loginButton">Login</string>
+    <string name="loginHint">login</string>
+    <string name="passwordHint">*****</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_reminders_page">RemindersPageActivity</string>
 </resources>
