@@ -12,4 +12,5 @@
     <string name="passwordHint">*****</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_reminders_page">RemindersPageActivity</string>
+    <string name="openMap">Go to map</string>
 </resources>

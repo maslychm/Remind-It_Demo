@@ -25,4 +25,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, RemindersPageActivity.class);
         startActivity(intent);
     }
+
+    public void openMap(View view) {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
 }
