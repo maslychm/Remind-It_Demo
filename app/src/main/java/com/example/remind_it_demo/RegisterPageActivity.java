@@ -14,8 +14,7 @@ public class RegisterPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register_page);
     }
 
-    public void goToRegisterActivity(View view) {
-        Intent intent = new Intent(this, LoginPageActivity.class);
-        startActivity(intent);
+    public void goToLoginActivity(View view) {
+        finish();
     }
 }
