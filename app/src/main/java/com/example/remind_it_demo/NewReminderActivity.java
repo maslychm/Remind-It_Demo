@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import static com.example.remind_it_demo.App.CHANNEL_1_ID;
+import static com.example.remind_it_demo.App.NOTIFICATION_CHANNEL;
 
 public class NewReminderActivity extends AppCompatActivity {
     private NotificationManagerCompat notificationManager;
@@ -55,7 +55,7 @@ public class NewReminderActivity extends AppCompatActivity {
         PendingIntent actionIntent = PendingIntent.getBroadcast(this,
                 0, broadcastIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+        Notification notification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.notif)
                 .setContentTitle(title)
                 .setContentText(message)
