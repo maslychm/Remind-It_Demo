@@ -15,9 +15,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class RemindersPageActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static String[] namesArray = {"Mykola","Kenneth","Jose","Jorge","Chris","Kyle","Misty"};
+
+public class RemindersPageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +38,18 @@ public class RemindersPageActivity extends AppCompatActivity {
             }
         });
 
+
+        String test[] = App.userData.test;
+        Event event1 = new Event("mighty","1","mighty","hello");
+        Event event2 = new Event("mighty1","2","mighty1","hello1");
+        App.userData.addEvent(event1);
+        App.userData.addEvent(event2);
+
+        List events = App.userData.getUserEvents();
+
         // Create array adapter and give adapter to listView
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
-                R.layout.activity_listview, namesArray);
+                R.layout.activity_listview, events);
         ListView listview = (ListView) findViewById(R.id.RemindersList);
         listview.setAdapter(adapter);
     }

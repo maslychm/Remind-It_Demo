@@ -10,18 +10,28 @@ public class UserData extends Application {
     private String username;
     private String email;
     private LocalDate birthday;
+    private LocalDate creationDate;
     private String token;
 
+    public String[] test = {"Mykola","Kenneth","Jose","Jorge","Chris","Kyle","Misty","NEW"};
     private List<Event> userEvents;
     private List<Event> nearbyEvents;
 
-    public UserData(String username, String email, LocalDate birthday, String token) {
-        this.username = username;
-        this.email = email;
-        this.birthday = birthday;
-        this.token = token;
+    public UserData() {
         this.userEvents = new ArrayList<Event>();
         this.nearbyEvents = new ArrayList<Event>();
+    }
+
+    public void addEvent(Event event) {
+        this.userEvents.add(event);
+    }
+
+    // For now just remove the object if it's the same
+    public void removeEvent(Event event) {
+        for (Event e : this.userEvents)
+            if (event.getName().equals(e.getName()))
+                this.userEvents.remove(e);
+                return;
     }
 
     public String getUsername() {
@@ -38,5 +48,45 @@ public class UserData extends Application {
 
     public String getToken() {
         return token;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public List<Event> getUserEvents() {
+        return userEvents;
+    }
+
+    public List<Event> getNearbyEvents() {
+        return nearbyEvents;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setUserEvents(List<Event> userEvents) {
+        this.userEvents = userEvents;
+    }
+
+    public void setNearbyEvents(List<Event> nearbyEvents) {
+        this.nearbyEvents = nearbyEvents;
     }
 }

@@ -4,6 +4,8 @@ import android.app.Application;
 
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+
 public class Event extends Application {
     private String username;
     private String userID;
@@ -14,6 +16,19 @@ public class Event extends Application {
     private boolean repeats;
     private Date dueDate;
     private String completionMethod;
+
+    public Event(String username, String userID, String name, String description) {
+        this.username = username;
+        this.userID = userID;
+        this.name = name;
+        this.description = description;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return name;
+    }
 
     public String getUsername() {
         return username;

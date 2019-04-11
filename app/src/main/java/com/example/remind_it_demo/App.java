@@ -5,14 +5,17 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
+import java.time.LocalDate;
+
 public class App extends Application {
     public static final String NOTIFICATION_CHANNEL = "channel_1";
-
+    public static UserData userData;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        userData = initUserData();
         createNotificationChannel();
     }
 
@@ -28,5 +31,9 @@ public class App extends Application {
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel1);
         }
+    }
+
+    private UserData initUserData() {
+        return new UserData();
     }
 }
