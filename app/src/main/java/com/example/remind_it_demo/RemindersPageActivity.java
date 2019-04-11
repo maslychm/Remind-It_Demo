@@ -38,13 +38,6 @@ public class RemindersPageActivity extends AppCompatActivity {
             }
         });
 
-
-        String test[] = App.userData.test;
-        Event event1 = new Event("mighty","1","mighty","hello");
-        Event event2 = new Event("mighty1","2","mighty1","hello1");
-        App.userData.addEvent(event1);
-        App.userData.addEvent(event2);
-
         List events = App.userData.getUserEvents();
 
         // Create array adapter and give adapter to listView
@@ -75,5 +68,4 @@ public class RemindersPageActivity extends AppCompatActivity {
         Intent intent = new Intent(this,NewReminderActivity.class);
         startActivity(intent);
     }
-
 }

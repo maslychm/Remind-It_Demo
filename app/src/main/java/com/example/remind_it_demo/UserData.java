@@ -12,8 +12,8 @@ public class UserData extends Application {
     private LocalDate birthday;
     private LocalDate creationDate;
     private String token;
+    private String userID;
 
-    public String[] test = {"Mykola","Kenneth","Jose","Jorge","Chris","Kyle","Misty","NEW"};
     private List<Event> userEvents;
     private List<Event> nearbyEvents;
 
@@ -32,6 +32,14 @@ public class UserData extends Application {
             if (event.getName().equals(e.getName()))
                 this.userEvents.remove(e);
                 return;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getUsername() {

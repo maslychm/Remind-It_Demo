@@ -34,6 +34,13 @@ public class App extends Application {
     }
 
     private UserData initUserData() {
-        return new UserData();
+        userData = new UserData();
+
+        userData.setUsername("mighty_lord");
+        userData.setEmail("maslychm@gmail.com");
+        userData.setBirthday(LocalDate.of(1999,8,16));
+        userData.setUserID("123456");
+
+        return userData;
     }
 }
