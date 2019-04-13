@@ -33,6 +33,7 @@ public class App extends Application {
         }
     }
 
+    // Init the userData object to then fill in during login
     private UserData initUserData() {
         userData = new UserData();
 

@@ -2,6 +2,7 @@ package com.example.remind_it_demo;
 
 import android.app.Application;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import androidx.annotation.NonNull;
@@ -12,9 +13,10 @@ public class Event extends Application {
     private boolean isPublic;
     private String name;
     private String description;
-    private double location;
+    private double latitude;
+    private double longitude;
     private boolean repeats;
-    private Date dueDate;
+    private LocalDate dueDate;
     private String completionMethod;
 
     public Event(String username, String userID, String name, String description) {
@@ -50,19 +52,63 @@ public class Event extends Application {
         return description;
     }
 
-    public double getLocation() {
-        return location;
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public boolean isRepeats() {
         return repeats;
     }
 
-    public Date getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
 
     public String getCompletionMethod() {
         return completionMethod;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setRepeats(boolean repeats) {
+        this.repeats = repeats;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public void setCompletionMethod(String completionMethod) {
+        this.completionMethod = completionMethod;
     }
 }

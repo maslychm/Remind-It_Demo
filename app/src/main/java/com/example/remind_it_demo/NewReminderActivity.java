@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.time.LocalDate;
+
 import static com.example.remind_it_demo.App.NOTIFICATION_CHANNEL;
 
 public class NewReminderActivity extends AppCompatActivity {
@@ -30,22 +32,33 @@ public class NewReminderActivity extends AppCompatActivity {
         editTextDescription = findViewById(R.id.edit_text_description);
 
         // Finish the New Reminder Activity when clicked Button cancel
-        final Button cancel = (Button) findViewById(R.id.button6);
+        final Button cancel = (Button) findViewById(R.id.cancelButton);
         cancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 finish();
             }
         });
+
+        final Button addReminder = (Button) findViewById(R.id.addReminder);
+        addReminder.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                addNewReminder(view);
+            }
+        });
+
     }
 
     public void addNewReminder(View view) {
         // Create event from userData and boxes, add event
-        String userName = App.userData.getUserID();
+        String userName = App.userData.getUsername();
         String userID = App.userData.getUserID();
         String name = editTextName.getText().toString();
         String description = editTextDescription.getText().toString();
 
+        LocalDate duedate = LocalDate.of(2019,4,13);
+
         Event event = new Event(userName,userID,name,description);
+        event.setDueDate(duedate);
         App.userData.addEvent(event);
     }
 

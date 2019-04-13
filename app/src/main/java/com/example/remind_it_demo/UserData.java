@@ -14,8 +14,8 @@ public class UserData extends Application {
     private String token;
     private String userID;
 
-    private List<Event> userEvents;
-    private List<Event> nearbyEvents;
+    private ArrayList<Event> userEvents;
+    private ArrayList<Event> nearbyEvents;
 
     public UserData() {
         this.userEvents = new ArrayList<Event>();
@@ -62,11 +62,11 @@ public class UserData extends Application {
         return creationDate;
     }
 
-    public List<Event> getUserEvents() {
+    public ArrayList<Event> getUserEvents() {
         return userEvents;
     }
 
-    public List<Event> getNearbyEvents() {
+    public ArrayList<Event> getNearbyEvents() {
         return nearbyEvents;
     }
 
@@ -90,11 +90,11 @@ public class UserData extends Application {
         this.token = token;
     }
 
-    public void setUserEvents(List<Event> userEvents) {
+    public void setUserEvents(ArrayList<Event> userEvents) {
         this.userEvents = userEvents;
     }
 
-    public void setNearbyEvents(List<Event> nearbyEvents) {
+    public void setNearbyEvents(ArrayList<Event> nearbyEvents) {
         this.nearbyEvents = nearbyEvents;
     }
 }

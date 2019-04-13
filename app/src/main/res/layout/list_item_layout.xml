@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="50"
+        android:weightSum="100">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:layout_weight="75"
+            android:id="@+id/image" />
+
+        <TextView
+            android:gravity="center"
+            android:textAlignment="center"
+            android:text="ReminderName"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/reminderName"
+            android:layout_weight="25"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="50">
+
+        <TextView
+            android:id="@+id/reminderDescription"
+            android:gravity="center"
+            android:text="ReminderDescription"
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+        <TextView
+            android:id="@+id/reminderDueDate"
+            android:gravity="center"
+            android:text="ReminderDueDate"
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -7,11 +7,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -28,22 +25,17 @@ public class RemindersPageActivity extends AppCompatActivity {
 
         // Create floating button and add click listener
         FloatingActionButton fab = findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Adding a new reminder", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
                 newReminderActivity(view);
             }
         });
 
-        List events = App.userData.getUserEvents();
-
-        // Create array adapter and give adapter to listView
-        ArrayAdapter adapter = new ArrayAdapter<String>(this,
-                R.layout.activity_listview, events);
         ListView listview = (ListView) findViewById(R.id.RemindersList);
+        ArrayList events = App.userData.getUserEvents();
+        EventListAdapter adapter = new EventListAdapter(getApplicationContext(), R.layout.list_item_layout, events);
         listview.setAdapter(adapter);
     }
 
@@ -68,4 +60,5 @@ public class RemindersPageActivity extends AppCompatActivity {
         Intent intent = new Intent(this,NewReminderActivity.class);
         startActivity(intent);
     }
+
 }
