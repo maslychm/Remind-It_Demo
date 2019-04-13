@@ -3,24 +3,59 @@ package com.example.remind_it_demo;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 
+import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Switch;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
 
 import static com.example.remind_it_demo.App.NOTIFICATION_CHANNEL;
 
-public class NewReminderActivity extends AppCompatActivity {
-    private NotificationManagerCompat notificationManager;
+public class NewReminderActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+    // UI elements
     private EditText editTextName;
     private EditText editTextDescription;
+    private Button buttonSetDueDate;
+    private Button buttonAddReminder;
+    private Button buttonCancel;
+    private Button buttonCurrentLocation;
+    private Switch repeatSwitch;
+    private Switch addLocationSwitch;
+
+    // Helping vars
+    private String dateString;
+    private NotificationManagerCompat notificationManager;
+    private FusedLocationProviderClient fusedLocationClient;
+
+    // Event constructor variables
+    Calendar calendar;
+    boolean repeatCheck = false;
+    boolean addLocationCheck = false;
+    double latittude = 0.0f;
+    double longitude = 0.0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,24 +63,92 @@ public class NewReminderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_reminder);
 
         notificationManager = NotificationManagerCompat.from(this);
-        editTextName = findViewById(R.id.edit_text_name);
-        editTextDescription = findViewById(R.id.edit_text_description);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        calendar = calendar = Calendar.getInstance();
+
+        editTextName = (EditText) findViewById(R.id.edit_text_name);
+        editTextDescription = (EditText) findViewById(R.id.edit_text_description);
+        buttonCancel = (Button) findViewById(R.id.cancelButton);
+        buttonAddReminder = (Button) findViewById(R.id.addReminder);
+        buttonSetDueDate = (Button) findViewById(R.id.setDueDateButton);
+        buttonCurrentLocation = (Button) findViewById(R.id.useLocationButton);
+        repeatSwitch = (Switch) findViewById(R.id.repeatSwitch);
+        addLocationSwitch = (Switch) findViewById(R.id.addLocationSwitch);
 
         // Finish the New Reminder Activity when clicked Button cancel
-        final Button cancel = (Button) findViewById(R.id.cancelButton);
-        cancel.setOnClickListener(new View.OnClickListener() {
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 finish();
             }
         });
 
-        final Button addReminder = (Button) findViewById(R.id.addReminder);
-        addReminder.setOnClickListener(new View.OnClickListener() {
+        // Add reminder locally and request HTTPS when clicked add
+        buttonAddReminder.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 addNewReminder(view);
             }
         });
 
+        // Display date picker
+        buttonSetDueDate.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                DialogFragment datePicker = new DatePickerFragment();
+                datePicker.show(getSupportFragmentManager(), "date picker");
+            }
+        });
+
+        buttonCurrentLocation.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // If location permissions are granted and location returned, save it
+                if (ContextCompat.checkSelfPermission(NewReminderActivity.this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+
+                    fusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(NewReminderActivity.this, new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    if (location != null) {
+                                        longitude = location.getLongitude();
+                                        latittude = location.getLatitude();
+                                    }
+                                }
+                            });
+                }
+            }
+        });
+
+        repeatSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    repeatCheck = true;
+                } else {
+                    repeatCheck = false;
+                }
+            }
+        });
+
+        addLocationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    addLocationCheck = true;
+                } else {
+                    addLocationCheck = false;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        dateString = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
+
+        buttonSetDueDate.setText(dateString);
     }
 
     public void addNewReminder(View view) {
@@ -55,10 +158,19 @@ public class NewReminderActivity extends AppCompatActivity {
         String name = editTextName.getText().toString();
         String description = editTextDescription.getText().toString();
 
-        LocalDate duedate = LocalDate.of(2019,4,13);
+        // Save duedate as LocalDate through Calendar
+        LocalDateTime dateTime = LocalDateTime.ofInstant(calendar.toInstant(), ZoneId.systemDefault());
+        LocalDate duedate = dateTime.toLocalDate();
 
         Event event = new Event(userName,userID,name,description);
         event.setDueDate(duedate);
+        event.setPublic(false);
+        event.setRepeats(repeatCheck);
+        event.setLongitude(longitude);
+        event.setLatitude(latittude);
+        if (addLocationCheck)
+            event.setCompletionMethod("location");
+        else event.setCompletionMethod("dateTime");
         App.userData.addEvent(event);
     }
 

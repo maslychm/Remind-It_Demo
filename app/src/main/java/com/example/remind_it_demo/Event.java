@@ -15,7 +15,7 @@ public class Event extends Application {
     private String description;
     private double latitude;
     private double longitude;
-    private boolean repeats;
+    private boolean repeated;
     private LocalDate dueDate;
     private String completionMethod;
 
@@ -69,7 +69,7 @@ public class Event extends Application {
     }
 
     public boolean isRepeats() {
-        return repeats;
+        return repeated;
     }
 
     public LocalDate getDueDate() {
@@ -100,8 +100,8 @@ public class Event extends Application {
         this.description = description;
     }
 
-    public void setRepeats(boolean repeats) {
-        this.repeats = repeats;
+    public void setRepeats(boolean repeated) {
+        this.repeated = repeated;
     }
 
     public void setDueDate(LocalDate dueDate) {
