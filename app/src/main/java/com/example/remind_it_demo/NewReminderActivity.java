@@ -21,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -36,6 +37,7 @@ import static com.example.remind_it_demo.App.NOTIFICATION_CHANNEL;
 
 public class NewReminderActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     // UI elements
+    private TextView displayCoord;
     private EditText editTextName;
     private EditText editTextDescription;
     private Button buttonSetDueDate;
@@ -51,10 +53,10 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     private FusedLocationProviderClient fusedLocationClient;
 
     // Event constructor variables
-    Calendar calendar;
+    private Calendar calendar;
     boolean repeatCheck = false;
     boolean addLocationCheck = false;
-    double latittude = 0.0f;
+    double latitude = 0.0f;
     double longitude = 0.0f;
 
     @Override
@@ -66,6 +68,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         calendar = calendar = Calendar.getInstance();
 
+        displayCoord = (TextView) findViewById(R.id.latlong);
         editTextName = (EditText) findViewById(R.id.edit_text_name);
         editTextDescription = (EditText) findViewById(R.id.edit_text_description);
         buttonCancel = (Button) findViewById(R.id.cancelButton);
@@ -110,7 +113,9 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                                 public void onSuccess(Location location) {
                                     if (location != null) {
                                         longitude = location.getLongitude();
-                                        latittude = location.getLatitude();
+                                        latitude = location.getLatitude();
+
+                                        displayCoord.setText("" + latitude + ", " + longitude);
                                     }
                                 }
                             });
@@ -167,7 +172,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         event.setPublic(false);
         event.setRepeats(repeatCheck);
         event.setLongitude(longitude);
-        event.setLatitude(latittude);
+        event.setLatitude(latitude);
         if (addLocationCheck)
             event.setCompletionMethod("location");
         else event.setCompletionMethod("dateTime");

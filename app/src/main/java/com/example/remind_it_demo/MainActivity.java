@@ -20,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
-    Button getStartedButton;
-    Button bypassToMapButton;
-    Button bypassLoginButton;
+    private Button getStartedButton;
+    private Button bypassToMapButton;
+    private Button bypassLoginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void askLocationPermission() {
-        // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
