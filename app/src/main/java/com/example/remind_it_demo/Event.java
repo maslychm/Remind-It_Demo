@@ -2,13 +2,11 @@ package com.example.remind_it_demo;
 
 import android.app.Application;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.Instant;
 
 import androidx.annotation.NonNull;
 
 public class Event extends Application {
-    private String username;
     private String userID;
     private boolean isPublic;
     private String name;
@@ -16,11 +14,10 @@ public class Event extends Application {
     private double latitude;
     private double longitude;
     private boolean repeated;
-    private LocalDate dueDate;
+    private Instant dueDate;
     private String completionMethod;
 
-    public Event(String username, String userID, String name, String description) {
-        this.username = username;
+    public Event(String userID, String name, String description) {
         this.userID = userID;
         this.name = name;
         this.description = description;
@@ -30,10 +27,6 @@ public class Event extends Application {
     @Override
     public String toString() {
         return name;
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     public String getUserID() {
@@ -72,16 +65,12 @@ public class Event extends Application {
         return repeated;
     }
 
-    public LocalDate getDueDate() {
+    public Instant getDueDate() {
         return dueDate;
     }
 
     public String getCompletionMethod() {
         return completionMethod;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public void setUserID(String userID) {
@@ -104,7 +93,7 @@ public class Event extends Application {
         this.repeated = repeated;
     }
 
-    public void setDueDate(LocalDate dueDate) {
+    public void setDueDate(Instant dueDate) {
         this.dueDate = dueDate;
     }
 
