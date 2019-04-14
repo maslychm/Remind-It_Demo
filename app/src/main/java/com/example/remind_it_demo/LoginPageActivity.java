@@ -1,28 +1,23 @@
 package com.example.remind_it_demo;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.Animator;
-import android.annotation.TargetApi;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginPageActivity extends AppCompatActivity {
 
@@ -60,7 +55,7 @@ public class LoginPageActivity extends AppCompatActivity {
                 // Create JSON Object for Login data
                 JSONObject loginData;
                 try {
-                    loginData = new JSONObject().put("username", login).put("password", password);
+                    loginData = new JSONObject().put("username", login).put("password", password).put("mobile", true);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     return;
@@ -76,7 +71,12 @@ public class LoginPageActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             if (response.getBoolean("success")) {
-                                goToRemindersPageActivity(v);
+                                JSONArray arr = response.getJSONObject("user").getJSONArray("reminders");
+                                if (arr != null) {
+                                    System.out.println(arr.length());
+                                    App.userData.setUserEvents(arr);
+                                    goToRemindersPageActivity(v);
+                                }
                                 //showProgress(false);
                             }
                         } catch (JSONException e) {

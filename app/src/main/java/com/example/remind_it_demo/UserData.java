@@ -2,15 +2,20 @@ package com.example.remind_it_demo;
 
 import android.app.Application;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.time.Instant;
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class UserData extends Application {
     private String username;
     private String email;
     private LocalDate birthday;
-    private LocalDate creationDate;
+    private LocalDateTime creationDate;
     private String token;
     private String userID;
 
@@ -58,7 +63,7 @@ public class UserData extends Application {
         return token;
     }
 
-    public LocalDate getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
@@ -82,7 +87,7 @@ public class UserData extends Application {
         this.birthday = birthday;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -92,6 +97,27 @@ public class UserData extends Application {
 
     public void setUserEvents(ArrayList<Event> userEvents) {
         this.userEvents = userEvents;
+    }
+
+    public void setUserEvents(JSONArray userEvents) {
+        int total = userEvents.length(), i;
+        JSONObject jsonReminder;
+        Event tempEvent;
+        ArrayList<Event> reminders = new ArrayList<Event>(total);
+        for (i = 0; i < total; i++) {
+            try {
+                jsonReminder = userEvents.getJSONObject(i);
+                tempEvent = new Event(userID, jsonReminder.getString("name"),
+                        jsonReminder.getString("description"));
+                tempEvent.setDueDate(Instant.parse(jsonReminder.getString("dueDate")));
+
+                reminders.add(tempEvent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        this.setUserEvents(reminders);
     }
 
     public void setNearbyEvents(ArrayList<Event> nearbyEvents) {

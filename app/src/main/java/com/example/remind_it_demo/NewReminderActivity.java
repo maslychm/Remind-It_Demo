@@ -1,11 +1,5 @@
 package com.example.remind_it_demo;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
-
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Notification;
@@ -28,10 +22,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.DateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Calendar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 
 import static com.example.remind_it_demo.App.NOTIFICATION_CHANNEL;
 
@@ -163,12 +160,8 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         String name = editTextName.getText().toString();
         String description = editTextDescription.getText().toString();
 
-        // Save duedate as LocalDate through Calendar
-        LocalDateTime dateTime = LocalDateTime.ofInstant(calendar.toInstant(), ZoneId.systemDefault());
-        LocalDate duedate = dateTime.toLocalDate();
-
-        Event event = new Event(userName,userID,name,description);
-        event.setDueDate(duedate);
+        Event event = new Event(userID,name,description);
+        event.setDueDate(calendar.toInstant());
         event.setPublic(false);
         event.setRepeats(repeatCheck);
         event.setLongitude(longitude);
