@@ -4,10 +4,25 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LoginPageActivity extends AppCompatActivity {
 
@@ -15,12 +30,14 @@ public class LoginPageActivity extends AppCompatActivity {
     private Button goToRegisterButton;
     private EditText loginEdit;
     private EditText passwordEdit;
+    private View progressView;
+    private View loginFormView;
 
     private String login;
     private String password;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
 
@@ -29,20 +46,52 @@ public class LoginPageActivity extends AppCompatActivity {
         loginEdit = findViewById(R.id.loginEnter);
         passwordEdit = findViewById(R.id.passwordEnter);
 
+        final RequestQueue queue = Volley.newRequestQueue(this);
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 login = loginEdit.getText().toString();
                 password = passwordEdit.getText().toString();
 
                 if (login == null || login.isEmpty() || password == null || password.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Please fill in login and password",Toast.LENGTH_SHORT).show();
                 }
+                // Create JSON Object for Login data
+                JSONObject loginData;
+                try {
+                    loginData = new JSONObject().put("username", login).put("password", password);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return;
+                }
 
                 // Call to DB login request
                 // if goes through and userData correctly initialized, proceed to Reminders Page Activity
 
-                //goToRemindersPageActivity(view);
+                //showProgress(true);
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest( "http://192.168.1.23:3000/users/auth",
+                        loginData, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.getBoolean("success")) {
+                                goToRemindersPageActivity(v);
+                                //showProgress(false);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println(error.toString());
+                        /// TODO: Handle error
+                    }
+                });
+
+                queue.add(jsonObjectRequest);
             }
         });
 
@@ -52,6 +101,9 @@ public class LoginPageActivity extends AppCompatActivity {
                 goToRegisterActivity(v);
             }
         });
+
+        loginFormView = findViewById(R.id.login_form);
+        progressView = findViewById(R.id.progressBar);
     }
 
     public void goToRegisterActivity(View view) {
