@@ -100,14 +100,16 @@ public class UserData extends Application {
     }
 
     public void setUserEvents(JSONArray userEvents) {
-        int total = userEvents.length(), i;
+        int total = userEvents.length();
+        int i = 0;
         JSONObject jsonReminder;
         Event tempEvent;
         ArrayList<Event> reminders = new ArrayList<Event>(total);
+
         for (i = 0; i < total; i++) {
             try {
                 jsonReminder = userEvents.getJSONObject(i);
-                tempEvent = new Event(userID, jsonReminder.getString("name"),
+                tempEvent = new Event(App.userData.userID, jsonReminder.getString("name"),
                         jsonReminder.getString("description"));
                 tempEvent.setDueDate(Instant.parse(jsonReminder.getString("dueDate")));
 

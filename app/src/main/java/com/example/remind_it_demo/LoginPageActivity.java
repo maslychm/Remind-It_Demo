@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -21,6 +23,8 @@ import org.json.JSONObject;
 
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -102,41 +106,16 @@ public class LoginPageActivity extends AppCompatActivity {
         }
 
         //showProgress(true);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest( "https://themeanteam.site/users/auth",
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                "https://themeanteam.site/users/auth",
                 loginData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
                 Log.i("auth response from server", response.toString());
                 try {
                     if (response.getBoolean("success")) {
-
-                        /*
-                        JSONArray arr = response.getJSONObject("user").getJSONArray("reminders");
-                        if (arr != null) {
-                            System.out.println(arr.length());
-                            App.userData.setUserEvents(arr);
-                        }
-                        //showProgress(false);
-                        */
-
-                        // Log response details for debugging
-                        Log.i("responseTOKEN ",response.getString("token"));
-                        Log.i("responseID",response.getJSONObject("user").getString("id"));
-                        Log.i("responseName",response.getJSONObject("user").getString("username"));
-
-                        // Save into userData
-                        App.userData.setUserID(response.getJSONObject("user").getString("id"));
-                        App.userData.setUsername(response.getJSONObject("user").getString("username"));
-                        App.userData.setToken(response.getString("token"));
-
-                        // Load in userEvents and publicEvents
-
-                        //JSONArray userEventsJSON = //call to backends userEvents
-                        //JSONArray nearbyEventsJSON = //call to backends nearbyEvents
-                        //App.userData.setUserEvents(userEventsJSON);
-                        //App.userData.setNearbyEvents(nearbyEventsJSON);
-
+                        saveUserData(response);
+                        fetchEvents();
                         goToRemindersPageActivity(view);
                     } else {
                         Toast.makeText(LoginPageActivity.this, "Login or password incorrect", Toast.LENGTH_SHORT).show();
@@ -154,6 +133,82 @@ public class LoginPageActivity extends AppCompatActivity {
         });
 
         queue.add(jsonObjectRequest);
+    }
+
+    public void saveUserData(JSONObject response) {
+        try {
+            // Log response details for debugging
+            Log.i("responseTOKEN ", response.getString("token"));
+            Log.i("responseID", response.getJSONObject("user").getString("id"));
+            Log.i("responseName", response.getJSONObject("user").getString("username"));
+
+            // Save into userData
+            App.userData.setUserID(response.getJSONObject("user").getString("id"));
+            App.userData.setUsername(response.getJSONObject("user").getString("username"));
+            App.userData.setToken(response.getString("token"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fetchEvents() {
+        RequestQueue queueEvents = Volley.newRequestQueue(getApplicationContext());
+        JSONObject getEventData;
+        try {
+            getEventData = new JSONObject().put("userID",App.userData.getUserID());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+        Log.i("fetchEvents() ", getEventData.toString());
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                "https://themeanteam.site/events/read",
+                getEventData, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i("eventlist response from server", response.toString());
+                try {
+                    if (response.getBoolean("success")) {
+                        // TODO pass correct values and correctly parse
+                        // into JSONArray
+                        //JSONArray arr = response.getJSONObject("user").getJSONArray("reminders");
+                        //if (arr != null) {
+                         //   System.out.println(arr.length());
+                            //   App.userData.setUserEvents(arr);
+                        //}
+
+                    } else {
+                        // If no success
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.toString());
+                // TODO: Handle error
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+
+                headers.put("Authorization",App.userData.getToken());
+                return headers;
+            }
+        };
+        queueEvents.add(jsonObjectRequest);
+
+        //showProgress(false);
+
+
+        //JSONArray userEventsJSON = //call to backends userEvents
+        //JSONArray nearbyEventsJSON = //call to backends nearbyEvents
+        //App.userData.setUserEvents(userEventsJSON);
+        //App.userData.setNearbyEvents(nearbyEventsJSON);
     }
 
     public void goToRegisterActivity(View view) {
