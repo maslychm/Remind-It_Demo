@@ -36,12 +36,6 @@ public class App extends Application {
     // Init the userData object to then fill in during login
     private UserData initUserData() {
         userData = new UserData();
-
-        userData.setUsername("mighty_lord");
-        userData.setEmail("maslychm@gmail.com");
-        userData.setBirthday(LocalDate.of(1999,8,16));
-        userData.setUserID("123456");
-
         return userData;
     }
 }
