@@ -23,7 +23,7 @@
     <EditText
         android:id="@+id/LoginEditText"
         android:layout_width="216dp"
-        android:layout_height="44dp"
+        android:layout_height="60dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="136dp"
         android:layout_marginEnd="24dp"
@@ -35,28 +35,44 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="216dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:ems="10"
+        android:hint="email"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LoginEditText" />
+
+    <EditText
         android:id="@+id/PasswordEditText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="216dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
         android:hint="@string/passwordHint"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
 
     <Button
         android:id="@+id/RegisterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="292dp"
+        android:layout_marginTop="352dp"
         android:layout_marginEnd="24dp"
         android:text="@string/registerButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
