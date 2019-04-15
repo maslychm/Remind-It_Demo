@@ -14,9 +14,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -152,36 +154,27 @@ public class LoginPageActivity extends AppCompatActivity {
 
     public void fetchEvents() {
         RequestQueue queueEvents = Volley.newRequestQueue(getApplicationContext());
-        JSONObject getEventData;
+        JSONArray getEventData;
+
         try {
-            getEventData = new JSONObject().put("userID",App.userData.getUserID());
-        } catch (JSONException e) {
+            getEventData = new JSONArray();
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
-        Log.i("fetchEvents() ", getEventData.toString());
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET,
-                "https://themeanteam.site/events/read",
-                getEventData, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.i("eventlist response from server", response.toString());
-                try {
-                    if (response.getBoolean("success")) {
-                        // TODO pass correct values and correctly parse
-                        // into JSONArray
-                        //JSONArray arr = response.getJSONObject("user").getJSONArray("reminders");
-                        //if (arr != null) {
-                         //   System.out.println(arr.length());
-                            //   App.userData.setUserEvents(arr);
-                        //}
 
-                    } else {
-                        // If no success
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        Log.i("fetchEvents() ", getEventData.toString());
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://themeanteam.site/events/read/" + App.userData.getUserID(),
+                getEventData, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+
+                Log.i("RESPOSE",response.toString());
+                if (response != null) {
+                    App.userData.setUserEvents(response);
                 }
             }
         }, new Response.ErrorListener() {
