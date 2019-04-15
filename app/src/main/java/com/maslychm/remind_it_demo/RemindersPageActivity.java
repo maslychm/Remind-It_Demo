@@ -31,7 +31,7 @@ public class RemindersPageActivity extends AppCompatActivity {
         });
 
         ListView listview = findViewById(R.id.RemindersList);
-        ArrayList events = App.userData.getUserEvents();
+        ArrayList<Event> events = App.userData.getUserEvents();
         EventListAdapter adapter = new EventListAdapter(getApplicationContext(), R.layout.list_item_layout, events);
         listview.setAdapter(adapter);
     }
