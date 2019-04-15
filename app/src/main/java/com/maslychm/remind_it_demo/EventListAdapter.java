@@ -1,4 +1,4 @@
-package com.example.remind_it_demo;
+package com.maslychm.remind_it_demo;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,10 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class EventListAdapter extends ArrayAdapter<Event> {
     private static final String TAG = "EventListAdapter";

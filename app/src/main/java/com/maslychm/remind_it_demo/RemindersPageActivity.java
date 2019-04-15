@@ -1,19 +1,16 @@
-package com.example.remind_it_demo;
+package com.maslychm.remind_it_demo;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class RemindersPageActivity extends AppCompatActivity {
@@ -33,7 +30,7 @@ public class RemindersPageActivity extends AppCompatActivity {
             }
         });
 
-        ListView listview = (ListView) findViewById(R.id.RemindersList);
+        ListView listview = findViewById(R.id.RemindersList);
         ArrayList events = App.userData.getUserEvents();
         EventListAdapter adapter = new EventListAdapter(getApplicationContext(), R.layout.list_item_layout, events);
         listview.setAdapter(adapter);

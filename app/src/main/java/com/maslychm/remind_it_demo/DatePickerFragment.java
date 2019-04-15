@@ -1,4 +1,4 @@
-package com.example.remind_it_demo;
+package com.maslychm.remind_it_demo;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

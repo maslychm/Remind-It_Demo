@@ -1,4 +1,4 @@
-package com.example.remind_it_demo;
+package com.maslychm.remind_it_demo;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.remind_it_demo", appContext.getPackageName());
+        assertEquals("com.maslychm.remind_it_demo", appContext.getPackageName());
     }
 }

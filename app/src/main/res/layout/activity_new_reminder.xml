@@ -75,6 +75,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addLocationSwitch" />
 
+    <Button
+        android:id="@+id/openLocPicker"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="76dp"
+        android:text="OPEN LOCATION PICKER"
+        app:layout_constraintEnd_toStartOf="@+id/latlong"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addLocationSwitch" />
+
+
     <TextView
         android:id="@+id/latlong"
         android:layout_width="180dp"

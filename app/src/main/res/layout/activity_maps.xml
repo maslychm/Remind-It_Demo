@@ -31,26 +31,26 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textSize="32dp"
-            android:text="Reminder Title" />
+            android:text="Reminder title" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:weightSum="100">
             <TextView
                 android:id="@+id/descriptionView"
-                android:textSize="26dp"
+                android:textSize="24dp"
                 android:layout_weight="50"
                 android:layout_width="18dp"
                 android:layout_height="match_parent"
-                android:text="Reminder Description" />
+                android:text="Reminder description" />
 
             <TextView
                 android:id="@+id/dueDateView"
-                android:textSize="32dp"
+                android:textSize="24dp"
                 android:layout_weight="50"
                 android:layout_width="18dp"
                 android:layout_height="match_parent"
-                android:text="Reminder due date and time" />
+                android:text="Due date and time" />
         </LinearLayout>
     </LinearLayout>
 

@@ -1,4 +1,4 @@
-package com.example.remind_it_demo;
+package com.maslychm.remind_it_demo;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
@@ -30,7 +30,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
-import static com.example.remind_it_demo.App.NOTIFICATION_CHANNEL;
+import static com.maslychm.remind_it_demo.App.NOTIFICATION_CHANNEL;
 
 public class NewReminderActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     // UI elements
@@ -43,6 +43,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     private Button buttonCurrentLocation;
     private Switch repeatSwitch;
     private Switch addLocationSwitch;
+    private Button openPickLocationButton;
 
     // Helping vars
     private String dateString;
@@ -74,6 +75,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         buttonCurrentLocation = (Button) findViewById(R.id.useLocationButton);
         repeatSwitch = (Switch) findViewById(R.id.repeatSwitch);
         addLocationSwitch = (Switch) findViewById(R.id.addLocationSwitch);
+        openPickLocationButton = (Button) findViewById(R.id.openLocPicker);
 
         // Finish the New Reminder Activity when clicked Button cancel
         buttonCancel.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +141,12 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 } else {
                     addLocationCheck = false;
                 }
+            }
+        });
+
+        openPickLocationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                //openMapLocationPickerActivity(view);
             }
         });
     }

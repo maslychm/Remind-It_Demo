@@ -1,11 +1,9 @@
-package com.example.remind_it_demo;
+package com.maslychm.remind_it_demo;
 
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-
-import java.time.LocalDate;
 
 public class App extends Application {
     public static final String NOTIFICATION_CHANNEL = "channel_1";
