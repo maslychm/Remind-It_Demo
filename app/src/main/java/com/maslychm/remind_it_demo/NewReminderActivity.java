@@ -228,7 +228,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                     if (response.getBoolean("success")) {
                         Toast.makeText(getApplicationContext(), "Event successfully added", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Login or password incorrect", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Event not created on DB", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
