@@ -48,7 +48,7 @@ public class LoginPageActivity extends AppCompatActivity {
     private String login;
     private String password;
 
-    RequestQueue queue;
+    private RequestQueue queue;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -108,6 +108,7 @@ public class LoginPageActivity extends AppCompatActivity {
 
         //showProgress(true);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
                 "https://themeanteam.site/users/auth",
                 loginData, new Response.Listener<JSONObject>() {
             @Override

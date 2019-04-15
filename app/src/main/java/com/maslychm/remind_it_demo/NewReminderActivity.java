@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -16,13 +17,26 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -49,6 +63,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     private String dateString;
     private NotificationManagerCompat notificationManager;
     private FusedLocationProviderClient fusedLocationClient;
+    private RequestQueue queue;
 
     // Event constructor variables
     private Calendar calendar;
@@ -65,6 +80,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         notificationManager = NotificationManagerCompat.from(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         calendar = calendar = Calendar.getInstance();
+        queue = Volley.newRequestQueue(this);
 
         displayCoord = (TextView) findViewById(R.id.latlong);
         editTextName = (EditText) findViewById(R.id.edit_text_name);
@@ -178,6 +194,65 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
             event.setCompletionMethod("location");
         else event.setCompletionMethod("dateTime");
         App.userData.addEvent(event);
+
+        sendAddReminderRequest(event);
+    }
+
+    public boolean sendAddReminderRequest(Event event) {
+
+        // Create JSON Object for Event data
+        JSONObject eventData;
+
+        boolean mustbenear = true;
+        event.getCompletionMethod();
+
+        try {
+            eventData = new JSONObject().put("userID", event.getUserID()).put("isPublic", false).put("name", event.getName())
+                    .put("description",event.getDescription()).put("lat",event.getLatitude()).put("lng",event.getLongitude())
+                    .put("repeats",event.isRepeats()).put("repeatUnit","week").put("repeatConst",1).put("dueDate",0)
+                    .put("mustBeNear",mustbenear).put("isComplete",false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        //showProgress(true);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                "https://themeanteam.site/events/create",
+                eventData, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i("auth response from server", response.toString());
+                try {
+                    if (response.getBoolean("success")) {
+                        Toast.makeText(getApplicationContext(), "Event successfully added", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Login or password incorrect", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.toString());
+                // TODO: Handle error
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+
+                headers.put("Authorization",App.userData.getToken());
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
+
+        return true;
     }
 
     // Send title and message as a notification through channel_1_ID
