@@ -71,11 +71,10 @@ public class LoginPageActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Try logging in
-                boolean successfulLogin = sendLoginRequest(login, password);
-                if (successfulLogin) {
-                    goToRemindersPageActivity(view);
-                }
+                // Try logging in and open activity from withing it
+                // Because it's an async task, main thread will finish first
+                // so just wait for full POST response
+                sendLoginRequest(login, password, view);
             }
         });
 
@@ -90,7 +89,7 @@ public class LoginPageActivity extends AppCompatActivity {
         handleSSLHandshake();
     }
 
-    public boolean sendLoginRequest(String login, String password) {
+    public void sendLoginRequest(String login, String password, final View view) {
 
         // Create JSON Object for Login data
         JSONObject loginData;
@@ -99,7 +98,7 @@ public class LoginPageActivity extends AppCompatActivity {
             loginData = new JSONObject().put("username", login).put("password", password).put("mobile", true);
         } catch (JSONException e) {
             e.printStackTrace();
-            return false;
+            return;
         }
 
         //showProgress(true);
@@ -107,7 +106,8 @@ public class LoginPageActivity extends AppCompatActivity {
                 loginData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.i("Login response from server", response.toString());
+
+                Log.i("auth response from server", response.toString());
                 try {
                     if (response.getBoolean("success")) {
 
@@ -131,10 +131,15 @@ public class LoginPageActivity extends AppCompatActivity {
                         App.userData.setToken(response.getString("token"));
 
                         // Load in userEvents and publicEvents
+
                         //JSONArray userEventsJSON = //call to backends userEvents
                         //JSONArray nearbyEventsJSON = //call to backends nearbyEvents
                         //App.userData.setUserEvents(userEventsJSON);
                         //App.userData.setNearbyEvents(nearbyEventsJSON);
+
+                        goToRemindersPageActivity(view);
+                    } else {
+                        Toast.makeText(LoginPageActivity.this, "Login or password incorrect", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -149,7 +154,6 @@ public class LoginPageActivity extends AppCompatActivity {
         });
 
         queue.add(jsonObjectRequest);
-        return true;
     }
 
     public void goToRegisterActivity(View view) {
