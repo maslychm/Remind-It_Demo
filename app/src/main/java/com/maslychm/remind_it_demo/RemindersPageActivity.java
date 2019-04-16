@@ -1,5 +1,7 @@
 package com.maslychm.remind_it_demo;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -50,6 +52,20 @@ public class RemindersPageActivity extends AppCompatActivity {
         //Log.i("User events:",events.toString());
         adapter = new EventListAdapter(getApplicationContext(), R.layout.list_item_layout, App.userData.getUserEvents());
         listview.setAdapter(adapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to logout?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        RemindersPageActivity.super.onBackPressed();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override
