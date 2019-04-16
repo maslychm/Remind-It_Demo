@@ -1,6 +1,7 @@
 package com.maslychm.remind_it_demo;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,19 @@ public class EventListAdapter extends ArrayAdapter<Event> {
 
     private Context mContext;
     int mResource;
+    private ArrayList<Event> events;
 
     public EventListAdapter(Context context, int resource, ArrayList<Event> objects) {
         super(context, resource, objects);
+        //Log.i("Objects: ",objects.toString());
         mContext = context;
         mResource = resource;
+        this.events = objects;
+    }
+
+    public void swapItems(ArrayList<Event> events) {
+        this.events = events;
+        notifyDataSetChanged();
     }
 
     @NonNull

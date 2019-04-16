@@ -7,6 +7,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -17,6 +18,8 @@ public class RemindersPageActivity extends AppCompatActivity {
 
     private FloatingActionButton newRem;
     private FloatingActionButton mapButton;
+    private ListView listview;
+    private EventListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,7 @@ public class RemindersPageActivity extends AppCompatActivity {
         // Create floating button and add click listener
         newRem = findViewById(R.id.newReminder);
         mapButton = findViewById(R.id.goToMapFab);
+        listview = findViewById(R.id.RemindersList);
 
         newRem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,10 +45,17 @@ public class RemindersPageActivity extends AppCompatActivity {
             }
         });
 
-        ListView listview = findViewById(R.id.RemindersList);
-        ArrayList<Event> events = App.userData.getUserEvents();
-        EventListAdapter adapter = new EventListAdapter(getApplicationContext(), R.layout.list_item_layout, events);
+
+        //ArrayList<Event> events = App.userData.getUserEvents();
+        //Log.i("User events:",events.toString());
+        adapter = new EventListAdapter(getApplicationContext(), R.layout.list_item_layout, App.userData.getUserEvents());
         listview.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.swapItems(App.userData.getUserEvents());
     }
 
     // TODO make list clickable with references to each reminder

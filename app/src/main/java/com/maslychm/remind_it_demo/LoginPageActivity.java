@@ -72,13 +72,12 @@ public class LoginPageActivity extends AppCompatActivity {
 
                 // Check both fields have input
                 if (login == null || login.isEmpty() || password == null || password.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Please fill in login and password",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please fill in login and password", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 // Try logging in and open activity from withing it
                 // Because it's an async task, main thread will finish first
-                // so just wait for full POST response
                 sendLoginRequest(login, password, view);
             }
         });
@@ -106,6 +105,7 @@ public class LoginPageActivity extends AppCompatActivity {
             return;
         }
 
+        Log.i("LoginPage Activity","Sending login request with: " + login + " : " + password);
         //showProgress(true);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
@@ -113,12 +113,17 @@ public class LoginPageActivity extends AppCompatActivity {
                 loginData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.i("auth response from server", response.toString());
+                Log.i("LoginActivity: Auth response from server", response.toString());
                 try {
                     if (response.getBoolean("success")) {
-                        saveUserData(response);
-                        fetchEvents();
-                        goToRemindersPageActivity(view);
+                        if (!saveUserData(response)) {
+                            Toast.makeText(LoginPageActivity.this, "Could not load user info", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (!fetchEvents(view)) {
+                            Toast.makeText(LoginPageActivity.this, "Could not load events", Toast.LENGTH_SHORT);
+                        }
+                        //goToRemindersPageActivity(view);
                     } else {
                         Toast.makeText(LoginPageActivity.this, "Login or password incorrect", Toast.LENGTH_SHORT).show();
                     }
@@ -130,14 +135,14 @@ public class LoginPageActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println(error.toString());
-                // TODO: Handle error
+                Log.e("LoginActivity", "Error response from the endpoint");
             }
         });
 
         queue.add(jsonObjectRequest);
     }
 
-    public void saveUserData(JSONObject response) {
+    public boolean saveUserData(JSONObject response) {
         try {
             // Log response details for debugging
             Log.i("responseTOKEN ", response.getString("token"));
@@ -150,10 +155,13 @@ public class LoginPageActivity extends AppCompatActivity {
             App.userData.setToken(response.getString("token"));
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e("Could not save user data", "Incorrect response???");
+            return false;
         }
+        return true;
     }
 
-    public void fetchEvents() {
+    public boolean fetchEvents(final View view) {
         RequestQueue queueEvents = Volley.newRequestQueue(getApplicationContext());
         JSONArray getEventData;
 
@@ -161,10 +169,8 @@ public class LoginPageActivity extends AppCompatActivity {
             getEventData = new JSONArray();
         } catch (Exception e) {
             e.printStackTrace();
-            return;
+            return false;
         }
-
-        Log.i("fetchEvents() ", getEventData.toString());
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -173,9 +179,10 @@ public class LoginPageActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
 
-                Log.i("RESPOSE",response.toString());
+                Log.i("Login activity RESPONSE: ",response.toString());
                 if (response != null) {
                     App.userData.setUserEvents(response);
+                    goToRemindersPageActivity(view);
                 }
             }
         }, new Response.ErrorListener() {
@@ -196,12 +203,7 @@ public class LoginPageActivity extends AppCompatActivity {
         queueEvents.add(jsonObjectRequest);
 
         //showProgress(false);
-
-
-        //JSONArray userEventsJSON = //call to backends userEvents
-        //JSONArray nearbyEventsJSON = //call to backends nearbyEvents
-        //App.userData.setUserEvents(userEventsJSON);
-        //App.userData.setNearbyEvents(nearbyEventsJSON);
+        return true;
     }
 
     public void goToRegisterActivity(View view) {
