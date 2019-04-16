@@ -39,6 +39,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -62,6 +63,8 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     private Button openPickLocationButton;
     private Button setDueTimeButton;
 
+    DialogFragment timePicker;
+
     // Helping vars
     private String dateString;
     private NotificationManagerCompat notificationManager;
@@ -70,6 +73,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
 
     // Event constructor variables
     private Calendar calendar;
+    private Calendar innerCalendar;
     boolean repeatCheck = false;
     boolean addLocationCheck = false;
     double latitude = 0.0f;
@@ -82,7 +86,9 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
 
         notificationManager = NotificationManagerCompat.from(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        TimeZone tz = TimeZone.getTimeZone("EDT");
         calendar =  Calendar.getInstance();
+        calendar.setTimeZone(tz);
         queue = Volley.newRequestQueue(this);
 
         displayCoord = (TextView) findViewById(R.id.latlong);
@@ -122,17 +128,11 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         setDueTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment timePicker = new TimePickerFragment();
+                timePicker = new TimePickerFragment();
                 timePicker.show(getSupportFragmentManager(),"time picker");
 
-                Calendar innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
-
-                // TODO MAKE THIS ASYNC
-                // NO ACTUALLY MAKE THIS TAKE THE CORRECT INSTANCE
-                calendar.set(Calendar.MINUTE, innerCalendar.MINUTE);
-                calendar.set(Calendar.SECOND, innerCalendar.SECOND);
-
-                Log.i(((Integer) innerCalendar.MINUTE).toString(), ((Integer) innerCalendar.SECOND).toString());
+                innerCalendar = Calendar.getInstance();
+                innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
             }
         });
 
@@ -150,8 +150,8 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                                     if (location != null) {
                                         longitude = location.getLongitude();
                                         latitude = location.getLatitude();
-
-                                        displayCoord.setText("" + latitude + ", " + longitude);
+                                        String locationString = "" +latitude + ", " + longitude;
+                                        displayCoord.setText(locationString);
                                     }
                                 }
                             });
@@ -162,22 +162,14 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         repeatSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    repeatCheck = true;
-                } else {
-                    repeatCheck = false;
-                }
+               repeatCheck = isChecked;
             }
         });
 
         addLocationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    addLocationCheck = true;
-                } else {
-                    addLocationCheck = false;
-                }
+                addLocationCheck = isChecked;
             }
         });
 
@@ -200,13 +192,17 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
 
     public void addNewReminder(View view) {
         // Create event from userData and boxes, add event
-        String userName = App.userData.getUsername();
         String userID = App.userData.getUserID();
         String name = editTextName.getText().toString();
         String description = editTextDescription.getText().toString();
 
+        // A non practical way to do this, but if set at this time, means the clock pick is already closed...
+        innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
+        calendar.set(Calendar.HOUR_OF_DAY, innerCalendar.get(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, innerCalendar.get(Calendar.MINUTE));
+
         Event event = new Event(userID,name,description);
-        Log.i(calendar.toInstant().toString(),"yes");
+        //Log.i("AS INSTANT: ", calendar.toInstant().toString());
         event.setDueDate(calendar.toInstant());
         event.setPublic(false); //TODO set publicity
         event.setRepeats(repeatCheck);
@@ -266,7 +262,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("New remider error",error.toString());
+                Log.e("New reminder error",error.toString());
             }
         }) {
             @Override
