@@ -47,10 +47,10 @@
         android:layout_width="200dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="REPEAT WEEKLY"
+        android:layout_marginTop="9dp"
+        android:text="REPEAT"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setDueDateButton" />
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
 
     <Switch
         android:id="@+id/addLocationSwitch"
@@ -58,7 +58,7 @@
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="ADD LOCATION?"
+        android:text="MUST BE NEAR EVENT"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/repeatSwitch" />
 
@@ -119,12 +119,12 @@
 
     <Button
         android:id="@+id/timePicker"
-        android:layout_width="177dp"
+        android:layout_width="200dp"
         android:layout_height="60dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:text="SET TIME"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/setDueDateButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

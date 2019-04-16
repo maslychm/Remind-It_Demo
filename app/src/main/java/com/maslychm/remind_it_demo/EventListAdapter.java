@@ -9,6 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -38,7 +41,11 @@ public class EventListAdapter extends ArrayAdapter<Event> {
     public View getView(int position, View convertView, ViewGroup parent) {
         String name =  getItem(position).getName();
         String description = getItem(position).getDescription();
-        String dueDate = getItem(position).getDueDate().toString();
+        LocalDateTime dueDateTime = LocalDateTime.ofInstant(getItem(position).getDueDate(), ZoneOffset.UTC);
+        String dueDate = "" + dueDateTime.getMonth().toString()
+                + " " + ((Integer)dueDateTime.getDayOfMonth()).toString()
+                + " at " + ((Integer)dueDateTime.getHour()).toString()
+                + ":" + ((Integer)dueDateTime.getMinute()).toString();
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);

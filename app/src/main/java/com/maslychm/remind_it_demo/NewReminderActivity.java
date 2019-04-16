@@ -75,7 +75,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     private Calendar calendar;
     private Calendar innerCalendar;
     boolean repeatCheck = false;
-    boolean addLocationCheck = false;
+    boolean mustBeNear = false;
     double latitude = 0.0f;
     double longitude = 0.0f;
 
@@ -169,7 +169,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         addLocationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                addLocationCheck = isChecked;
+                mustBeNear = isChecked;
             }
         });
 
@@ -202,7 +202,6 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         calendar.set(Calendar.MINUTE, innerCalendar.get(Calendar.MINUTE));
 
         Event event = new Event(userID,name,description);
-        //Log.i("AS INSTANT: ", calendar.toInstant().toString());
         event.setDueDate(calendar.toInstant());
         event.setPublic(false); //TODO set publicity
         event.setRepeats(repeatCheck);
@@ -210,6 +209,8 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         event.setRepeatConst(0); //TODO set repeatConst
         event.setLongitude(longitude);
         event.setLatitude(latitude);
+        event.setMustBeNear(mustBeNear);
+        event.setComplete(false);
 
         App.userData.addEvent(event);
 
