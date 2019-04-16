@@ -97,7 +97,7 @@ public class RegisterPageActivity extends AppCompatActivity {
         }
 
         //showProgress(true);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest( "https://themeanteam.site/users/reg",
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getString(R.string.register_url),
                 registerData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

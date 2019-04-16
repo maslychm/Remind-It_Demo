@@ -214,7 +214,10 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
 
         App.userData.addEvent(event);
 
-        sendAddReminderRequest(event);
+        boolean success = sendAddReminderRequest(event);
+        if(success) {
+            finish();
+        }
     }
 
     public boolean sendAddReminderRequest(Event event) {
@@ -245,7 +248,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                "https://themeanteam.site/events/create",
+                getString(R.string.newReminder_url),
                 eventData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

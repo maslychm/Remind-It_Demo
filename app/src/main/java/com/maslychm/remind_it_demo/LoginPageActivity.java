@@ -109,7 +109,7 @@ public class LoginPageActivity extends AppCompatActivity {
         //showProgress(true);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                "https://themeanteam.site/users/auth",
+                getString(R.string.login_url),
                 loginData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -174,7 +174,7 @@ public class LoginPageActivity extends AppCompatActivity {
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://themeanteam.site/events/read/" + App.userData.getUserID(),
+                getString(R.string.fetchReminders_url) + App.userData.getUserID(),
                 getEventData, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
