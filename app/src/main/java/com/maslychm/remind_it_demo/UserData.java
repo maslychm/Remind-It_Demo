@@ -112,6 +112,14 @@ public class UserData extends Application {
                 tempEvent = new Event(App.userData.userID, jsonReminder.getString("name"),
                         jsonReminder.getString("description"));
                 tempEvent.setDueDate(Instant.parse(jsonReminder.getString("dueDate")));
+                tempEvent.setPublic(jsonReminder.getBoolean("isPublic"));
+                tempEvent.setLatitude(jsonReminder.getDouble("lat"));
+                tempEvent.setLongitude(jsonReminder.getDouble("lng"));
+                tempEvent.setRepeats(jsonReminder.getBoolean("repeats"));
+                tempEvent.setRepeatUnit(jsonReminder.getString("repeatUnit"));
+                tempEvent.setRepeatConst(jsonReminder.getInt("repeatConst"));
+                tempEvent.setMustBeNear(jsonReminder.getBoolean("mustBeNear"));
+                tempEvent.setComplete(jsonReminder.getBoolean("isComplete"));
 
                 reminders.add(tempEvent);
             } catch (JSONException e) {

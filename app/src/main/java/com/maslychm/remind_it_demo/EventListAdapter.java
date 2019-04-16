@@ -52,7 +52,7 @@ public class EventListAdapter extends ArrayAdapter<Event> {
         tvDueDate.setText(dueDate);
 
         int id = 0;
-        if ("location".equals(getItem(position).getCompletionMethod()))
+        if (getItem(position).isMustBeNear())
             id = mContext.getResources().getIdentifier("drawable/" + "notif", null, mContext.getPackageName());
         else id = mContext.getResources().getIdentifier("drawable/" + "clock", null, mContext.getPackageName());
 

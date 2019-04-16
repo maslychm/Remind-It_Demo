@@ -186,13 +186,13 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
 
         Event event = new Event(userID,name,description);
         event.setDueDate(calendar.toInstant());
-        event.setPublic(false);
+        event.setPublic(false); //TODO set publicity
         event.setRepeats(repeatCheck);
+        event.setRepeatUnit(""); //TODO set repeat unit
+        event.setRepeatConst(0); //TODO set repeatConst
         event.setLongitude(longitude);
         event.setLatitude(latitude);
-        if (addLocationCheck)
-            event.setCompletionMethod("location");
-        else event.setCompletionMethod("dateTime");
+
         App.userData.addEvent(event);
 
         sendAddReminderRequest(event);
@@ -203,20 +203,27 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         // Create JSON Object for Event data
         JSONObject eventData;
 
-        boolean mustbenear = true;
-        event.getCompletionMethod();
-
         try {
-            eventData = new JSONObject().put("userID", event.getUserID()).put("isPublic", false).put("name", event.getName())
-                    .put("description",event.getDescription()).put("lat",event.getLatitude()).put("lng",event.getLongitude())
-                    .put("repeats",event.isRepeats()).put("repeatUnit","week").put("repeatConst",1).put("dueDate",0)
-                    .put("mustBeNear",mustbenear).put("isComplete",false);
+            eventData = new JSONObject()
+                    .put("userID", event.getUserID())
+                    .put("isPublic", event.isPublic())
+                    .put("name", event.getName())
+                    .put("description",event.getDescription())
+                    .put("lat",event.getLatitude())
+                    .put("lng",event.getLongitude())
+                    .put("repeats",event.isRepeats())
+                    .put("repeatUnit",event.getRepeatUnit())
+                    .put("repeatConst",event.getRepeatConst())
+                    .put("dueDate",event.getDueDate())
+                    .put("mustBeNear",event.isMustBeNear())
+                    .put("isComplete",event.isComplete());
         } catch (JSONException e) {
             e.printStackTrace();
             return false;
         }
 
-        //showProgress(true);
+        Log.i("Sending new reminder","reminder");
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 "https://themeanteam.site/events/create",
@@ -237,8 +244,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println(error.toString());
-                // TODO: Handle error
+                Log.e("New remider error",error.toString());
             }
         }) {
             @Override

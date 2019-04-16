@@ -13,9 +13,12 @@ public class Event extends Application {
     private String description;
     private double latitude;
     private double longitude;
-    private boolean repeated;
+    private boolean repeats;
+    private String repeatUnit;
+    private int repeatConst;
     private Instant dueDate;
-    private String completionMethod;
+    private boolean mustBeNear;
+    private boolean isComplete;
 
     public Event(String userID, String name, String description) {
         this.userID = userID;
@@ -62,15 +65,11 @@ public class Event extends Application {
     }
 
     public boolean isRepeats() {
-        return repeated;
+        return repeats;
     }
 
     public Instant getDueDate() {
         return dueDate;
-    }
-
-    public String getCompletionMethod() {
-        return completionMethod;
     }
 
     public void setUserID(String userID) {
@@ -90,14 +89,42 @@ public class Event extends Application {
     }
 
     public void setRepeats(boolean repeated) {
-        this.repeated = repeated;
+        this.repeats = repeated;
     }
 
     public void setDueDate(Instant dueDate) {
         this.dueDate = dueDate;
     }
 
-    public void setCompletionMethod(String completionMethod) {
-        this.completionMethod = completionMethod;
+    public String getRepeatUnit() {
+        return repeatUnit;
+    }
+
+    public void setRepeatUnit(String repeatUnit) {
+        this.repeatUnit = repeatUnit;
+    }
+
+    public int getRepeatConst() {
+        return repeatConst;
+    }
+
+    public void setRepeatConst(int repeatConst) {
+        this.repeatConst = repeatConst;
+    }
+
+    public boolean isMustBeNear() {
+        return mustBeNear;
+    }
+
+    public void setMustBeNear(boolean mustBeNear) {
+        this.mustBeNear = mustBeNear;
+    }
+
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    public void setComplete(boolean Complete) {
+        isComplete = Complete;
     }
 }

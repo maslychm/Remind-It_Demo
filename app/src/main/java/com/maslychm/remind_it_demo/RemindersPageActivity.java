@@ -11,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -47,11 +49,15 @@ public class RemindersPageActivity extends AppCompatActivity {
             }
         });
 
-
-        //ArrayList<Event> events = App.userData.getUserEvents();
-        //Log.i("User events:",events.toString());
         adapter = new EventListAdapter(getApplicationContext(), R.layout.list_item_layout, App.userData.getUserEvents());
         listview.setAdapter(adapter);
+
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(RemindersPageActivity.this, "" + App.userData.getUserEvents().get(position), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -74,20 +80,6 @@ public class RemindersPageActivity extends AppCompatActivity {
         adapter.swapItems(App.userData.getUserEvents());
     }
 
-    // TODO make list clickable with references to each reminder
-
-    /*
-    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-        Log.i("HelloListView", "You clicked Item: " + id + " at position:" + position);
-        // Then you start a new Activity via Intent
-        Intent intent = new Intent();
-        intent.setClass(this, ListItemDetail.class);
-        intent.putExtra("position", position);
-        // Or / And
-        intent.putExtra("id", id);
-        startActivity(intent);
-    }
-    */
     public void newReminderActivity(View view) {
         Intent intent = new Intent(this,NewReminderActivity.class);
         startActivity(intent);

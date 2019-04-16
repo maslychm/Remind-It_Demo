@@ -179,7 +179,7 @@ public class LoginPageActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
 
-                Log.i("Login activity RESPONSE: ",response.toString());
+                Log.i("Fetch Events RESPONSE: ",response.toString());
                 if (response != null) {
                     App.userData.setUserEvents(response);
                     goToRemindersPageActivity(view);
