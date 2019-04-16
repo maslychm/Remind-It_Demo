@@ -188,8 +188,7 @@ public class LoginPageActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println(error.toString());
-                // TODO: Handle error
+                Log.e("Login page volley call error",error.toString());
             }
         }) {
             @Override

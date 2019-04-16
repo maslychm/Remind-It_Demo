@@ -105,17 +105,6 @@ public class RegisterPageActivity extends AppCompatActivity {
                 Log.i("reg response from server", response.toString());
                 try {
                     if (response.getBoolean("success")) {
-
-                        /*
-                        JSONArray arr = response.getJSONObject("user").getJSONArray("reminders");
-                        if (arr != null) {
-                            System.out.println(arr.length());
-                            App.userData.setUserEvents(arr);
-                        }
-                        //showProgress(false);
-                        */
-
-                        // Log response details for debugging
                         Log.i("responseID",response.getJSONObject("user").getString("id"));
                         Log.i("responseName",response.getJSONObject("user").getString("username"));
 
@@ -123,13 +112,7 @@ public class RegisterPageActivity extends AppCompatActivity {
                         App.userData.setUserID(response.getJSONObject("user").getString("id"));
                         App.userData.setUsername(response.getJSONObject("user").getString("username"));
 
-                        // Load in userEvents and publicEvent
-
-                        //JSONArray userEventsJSON = //call to backends userEvents
-                        //JSONArray nearbyEventsJSON = //call to backends nearbyEvents
-                        //App.userData.setUserEvents(userEventsJSON);
-                        //App.userData.setNearbyEvents(nearbyEventsJSON);
-                        Toast.makeText(RegisterPageActivity.this, "Successfully registered user" + response.getJSONObject("user").getString("username"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterPageActivity.this, "Successfully registered user " + response.getJSONObject("user").getString("username"), Toast.LENGTH_SHORT).show();
 
                     } else {
                         if ("User already exists.".equals(response.getString("msg"))) {
@@ -144,8 +127,7 @@ public class RegisterPageActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println(error.toString());
-                // TODO: Handle error
+                Log.e("Register Page error", "some error in sending register fiels");
             }
         });
 

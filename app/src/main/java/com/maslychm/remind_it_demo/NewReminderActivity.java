@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -58,6 +60,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     private Switch repeatSwitch;
     private Switch addLocationSwitch;
     private Button openPickLocationButton;
+    private Button setDueTimeButton;
 
     // Helping vars
     private String dateString;
@@ -79,7 +82,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
 
         notificationManager = NotificationManagerCompat.from(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        calendar = calendar = Calendar.getInstance();
+        calendar =  Calendar.getInstance();
         queue = Volley.newRequestQueue(this);
 
         displayCoord = (TextView) findViewById(R.id.latlong);
@@ -92,6 +95,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         repeatSwitch = (Switch) findViewById(R.id.repeatSwitch);
         addLocationSwitch = (Switch) findViewById(R.id.addLocationSwitch);
         openPickLocationButton = (Button) findViewById(R.id.openLocPicker);
+        setDueTimeButton = (Button) findViewById(R.id.timePicker);
 
         // Finish the New Reminder Activity when clicked Button cancel
         buttonCancel.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +116,22 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
             public void onClick(View view) {
                 DialogFragment datePicker = new DatePickerFragment();
                 datePicker.show(getSupportFragmentManager(), "date picker");
+            }
+        });
+
+        setDueTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment timePicker = new TimePickerFragment();
+                timePicker.show(getSupportFragmentManager(),"time picker");
+
+                Calendar innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
+
+                // TODO MAKE THIS ASYNC
+                calendar.set(Calendar.MINUTE, innerCalendar.MINUTE);
+                calendar.set(Calendar.SECOND, innerCalendar.SECOND);
+
+                Log.i(((Integer) innerCalendar.MINUTE).toString(), ((Integer) innerCalendar.SECOND).toString());
             }
         });
 
@@ -292,5 +312,13 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 .build();
 
         notificationManager.notify(1,notification);
+    }
+
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
     }
 }
