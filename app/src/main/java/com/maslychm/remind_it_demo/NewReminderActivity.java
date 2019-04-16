@@ -128,6 +128,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 Calendar innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
 
                 // TODO MAKE THIS ASYNC
+                // NO ACTUALLY MAKE THIS TAKE THE CORRECT INSTANCE
                 calendar.set(Calendar.MINUTE, innerCalendar.MINUTE);
                 calendar.set(Calendar.SECOND, innerCalendar.SECOND);
 
@@ -205,6 +206,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         String description = editTextDescription.getText().toString();
 
         Event event = new Event(userID,name,description);
+        Log.i(calendar.toInstant().toString(),"yes");
         event.setDueDate(calendar.toInstant());
         event.setPublic(false); //TODO set publicity
         event.setRepeats(repeatCheck);

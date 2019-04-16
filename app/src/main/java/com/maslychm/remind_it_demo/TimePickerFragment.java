@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -30,8 +31,10 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        //calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, minute);
+        Log.i(((Integer)hourOfDay).toString(),((Integer)minute).toString());
     }
 
     public Calendar getCalendar() {
