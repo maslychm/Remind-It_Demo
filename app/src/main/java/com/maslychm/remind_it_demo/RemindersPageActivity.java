@@ -15,18 +15,29 @@ import java.util.ArrayList;
 
 public class RemindersPageActivity extends AppCompatActivity {
 
+    private FloatingActionButton newRem;
+    private FloatingActionButton mapButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reminders_page);
 
         // Create floating button and add click listener
-        FloatingActionButton fab = findViewById(R.id.fab);
+        newRem = findViewById(R.id.newReminder);
+        mapButton = findViewById(R.id.goToMapFab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        newRem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 newReminderActivity(view);
+            }
+        });
+
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openMap(view);
             }
         });
 
@@ -37,9 +48,6 @@ public class RemindersPageActivity extends AppCompatActivity {
     }
 
     // TODO make list clickable with references to each reminder
-
-    // TODO add pics with a timer or a location pic to each reminder
-    // TODO Or figure out how to use RecyclerView
 
     /*
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
@@ -58,4 +66,8 @@ public class RemindersPageActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openMap(View view) {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
 }

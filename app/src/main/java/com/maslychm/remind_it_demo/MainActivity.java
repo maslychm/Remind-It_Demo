@@ -16,8 +16,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     private Button getStartedButton;
-    private Button bypassToMapButton;
-    private Button bypassLoginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,30 +23,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         getStartedButton = findViewById(R.id.GetStarted);
-        bypassLoginButton = findViewById(R.id.ByPass);
-        bypassToMapButton = findViewById(R.id.BypassToMap);
-
         getStartedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToLoginActivity(v);
             }
         });
-
-        bypassLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bypassLogin(v);
-            }
-        });
-
-        bypassToMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openMap(v);
-            }
-        });
-
 
         askLocationPermission();
     }
@@ -83,17 +63,6 @@ public class MainActivity extends AppCompatActivity {
     // Take user to the login page
     public void goToLoginActivity(View view) {
         Intent intent = new Intent(this, LoginPageActivity.class);
-        startActivity(intent);
-    }
-
-    // For testing only: bypass login and go to fake reminders list
-    public void bypassLogin(View view) {
-        Intent intent = new Intent(this, RemindersPageActivity.class);
-        startActivity(intent);
-    }
-
-    public void openMap(View view) {
-        Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
 }
