@@ -204,6 +204,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         }
 
         Event event = new Event(userID,name,description);
+        //event.set_id();
         event.setDueDate(calendar.toInstant());
         event.setPublic(false); //TODO set publicity
         event.setRepeats(repeatCheck);
@@ -222,7 +223,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         }
     }
 
-    public boolean sendAddReminderRequest(Event event) {
+    public boolean sendAddReminderRequest(final Event event) {
 
         // Create JSON Object for Event data
         JSONObject eventData;
@@ -258,6 +259,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 try {
                     if (response.getBoolean("success")) {
                         Toast.makeText(getApplicationContext(), "Event successfully added", Toast.LENGTH_SHORT).show();
+                        event.set_id(response.getString("_id"));
                         finish();
                     } else {
                         Toast.makeText(getApplicationContext(), "Event not created on DB", Toast.LENGTH_SHORT).show();

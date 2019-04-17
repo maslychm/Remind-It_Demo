@@ -1,6 +1,7 @@
 package com.maslychm.remind_it_demo;
 
 import android.app.Application;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,10 +34,17 @@ public class UserData extends Application {
 
     // For now just remove the object if it's the same
     public void removeEvent(Event event) {
-        for (Event e : this.userEvents)
-            if (event.getName().equals(e.getName()))
-                this.userEvents.remove(e);
+        Log.i("In UserData ", "remove called:" + event.toString());
+        int length = this.userEvents.size();
+
+        for (int i = 0; i < length; i++) {
+            //Log.i("in UserDta: ", "comparing " + event.toString() + this.userEvents.get(i));
+            if (event.get_id().equals(this.userEvents.get(i).get_id())){
+                Log.i("In UserData ", "removing object E:" + event.toString());
+                this.userEvents.remove(event);
                 return;
+            }
+        }
     }
 
     public String getUserID() {
@@ -111,6 +119,7 @@ public class UserData extends Application {
                 jsonReminder = userEvents.getJSONObject(i);
                 tempEvent = new Event(App.userData.userID, jsonReminder.getString("name"),
                         jsonReminder.getString("description"));
+                tempEvent.set_id(jsonReminder.getString("_id"));
                 tempEvent.setDueDate(Instant.parse(jsonReminder.getString("dueDate")));
                 tempEvent.setPublic(jsonReminder.getBoolean("isPublic"));
                 tempEvent.setLatitude(jsonReminder.getDouble("lat"));

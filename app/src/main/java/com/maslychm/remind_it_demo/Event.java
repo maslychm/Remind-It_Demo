@@ -8,6 +8,7 @@ import java.time.Instant;
 import androidx.annotation.NonNull;
 
 public class Event extends Application implements Serializable {
+    private String _id;
     private String userID;
     private boolean isPublic;
     private String name;
@@ -31,6 +32,14 @@ public class Event extends Application implements Serializable {
     @Override
     public String toString() {
         return name;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getUserID() {
