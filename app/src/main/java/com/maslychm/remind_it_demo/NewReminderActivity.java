@@ -38,20 +38,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.libraries.places.compat.GeoDataClient;
-//import com.google.android.libraries.places.compat.Place;
 import com.google.android.gms.location.places.Place;
-import com.google.android.libraries.places.compat.PlaceDetectionClient;
-import com.google.android.libraries.places.compat.PlaceLikelihood;
-import com.google.android.libraries.places.compat.PlaceLikelihoodBufferResponse;
-import com.google.android.libraries.places.compat.PlacePhotoMetadata;
-import com.google.android.libraries.places.compat.PlacePhotoMetadataBuffer;
-import com.google.android.libraries.places.compat.PlacePhotoMetadataResponse;
-import com.google.android.libraries.places.compat.PlacePhotoResponse;
-import com.google.android.libraries.places.compat.Places;
-import com.google.android.libraries.places.compat.ui.PlaceAutocomplete;
-import com.google.android.libraries.places.compat.ui.PlaceAutocompleteFragment;
-import com.google.android.libraries.places.compat.ui.PlaceSelectionListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -199,9 +186,10 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
             public void onClick(View view) {
                 try {
                     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                    startActivityForResult(builder.build(thisOne), 1);
+                    startActivityForResult(builder.build(NewReminderActivity.this), 1);
+                    Log.i("attempt to start picker","hello");
                 } catch (GooglePlayServicesRepairableException e) {
-                    GooglePlayServicesUtil.getErrorDialog(e.getConnectionStatusCode(), thisOne, 0);
+                    GooglePlayServicesUtil.getErrorDialog(e.getConnectionStatusCode(), NewReminderActivity.this, 0);
                 } catch (GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                     //showResponse(getString(R.string.google_play_services_error));
@@ -356,6 +344,8 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     {
         super.onActivityResult(requestCode, resultCode, data);
         double lat = 0, lng = 0;
+
+        Log.i("onActivityResult","yes");
         Place place;
         if (resultCode == Activity.RESULT_OK)
         {

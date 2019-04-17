@@ -90,7 +90,7 @@ public class LoginPageActivity extends AppCompatActivity {
         });
 
         // Ignore SSL Certificate Check
-        handleSSLHandshake();
+        //handleSSLHandshake();
     }
 
     public void sendLoginRequest(String login, String password, final View view) {
@@ -217,7 +217,7 @@ public class LoginPageActivity extends AppCompatActivity {
 
     /**
      * Enables https connections
-     */
+     *
     @SuppressLint("TrulyRandom")
     public static void handleSSLHandshake() {
         try {
@@ -247,4 +247,5 @@ public class LoginPageActivity extends AppCompatActivity {
         }
         catch (Exception ignored) { }
     }
+                */
 }

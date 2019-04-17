@@ -14,12 +14,12 @@
     <string name="title_activity_reminders_page">RemindersPageActivity</string>
     <string name="openMap">Go to map</string>
     <string name="cancel_finish">Cancel</string>
-    <string name="register_url">https://themeanteam.site/users/reg</string>
-    <string name="login_url">https://themeanteam.site/users/auth</string>
-    <string name="newReminder_url">https://themeanteam.site/events/create</string>
-    <string name="fetchReminders_url">https://themeanteam.site/events/read/</string>
-    <string name="deleteReminder_url">https://themeanteam.site/events/delete/</string>
-    <string name="editReminder_url"></string>
+    <string name="register_url">https://remind-it-236717.appspot.com/users/reg</string>
+    <string name="login_url">https://remind-it-236717.appspot.com/users/auth</string>
+    <string name="newReminder_url">https://remind-it-236717.appspot.com/events/create</string>
+    <string name="fetchReminders_url">https://remind-it-236717.appspot.com/events/read/</string>
+    <string name="deleteReminder_url">https://remind-it-236717.appspot.com/events/delete/</string>
+    <string name="editReminder_url">https://remind-it-236717.appspot.com/events/update/</string>
     <string name="title_activity_choose_location">Choose Location</string>
     <string name="title_activity_map_picker">Map</string>
 </resources>

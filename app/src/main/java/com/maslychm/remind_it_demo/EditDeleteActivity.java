@@ -266,7 +266,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
         newEvent.setMustBeNear(mustBeNear);
         newEvent.setComplete(false);
 
-        //sendEditRequest(event);
+        sendEditRequest(newEvent);
 
         // remove the old local event
         App.userData.removeEvent(event);
@@ -275,6 +275,70 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
         App.userData.addEvent(newEvent);
 
         return newEvent;
+    }
+
+    public boolean sendEditRequest(final Event newEvent) {
+        JSONObject eventData;
+
+        try {
+            eventData = new JSONObject()
+                    .put("_id", newEvent.get_id())
+                    .put("userID", newEvent.getUserID())
+                    .put("isPublic", newEvent.isPublic())
+                    .put("name", newEvent.getName())
+                    .put("description",newEvent.getDescription())
+                    .put("lat",newEvent.getLatitude())
+                    .put("lng",newEvent.getLongitude())
+                    .put("repeats",newEvent.isRepeats())
+                    .put("repeatUnit",newEvent.getRepeatUnit())
+                    .put("repeatConst",newEvent.getRepeatConst())
+                    .put("dueDate",newEvent.getDueDate())
+                    .put("mustBeNear",newEvent.isMustBeNear())
+                    .put("isComplete",newEvent.isComplete());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        Log.i("EditDelete sending UPDATE", eventData.toString());
+        Log.i("Edit request to","");
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.PUT,
+                getString(R.string.editReminder_url) + newEvent.get_id(),
+                eventData, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i("UPDATE Response",response.toString());
+                try {
+                    if (response.getBoolean("success")) {
+                        Toast.makeText(getApplicationContext(),"Successfully updated event", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error occured during update", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Update error",error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+
+                headers.put("Authorization",App.userData.getToken());
+                //headers.put("Content-Type","application/json");
+                headers.put("id",newEvent.get_id());
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
+        return true;
     }
 
     public boolean sendDeleteRequest(final Event event) {
@@ -288,11 +352,11 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
             return false;
         }
 
-        Log.i("EditDelete sending DELETE", event.get_id());
+        Log.i("EditDelete sending DELETE", eventData.toString());
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.DELETE,
-                getString(R.string.deleteReminder_url), // + event.get_id(),
+                getString(R.string.deleteReminder_url),// + event.get_id(),
                 eventData, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -319,7 +383,8 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
                 Map<String, String> headers = new HashMap<>();
 
                 headers.put("Authorization",App.userData.getToken());
-                headers.put("Content-Type","application/json");
+                //headers.put("Content-Type","application/json");
+                headers.put("_id",event.get_id());
                 return headers;
             }
         };
