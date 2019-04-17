@@ -22,6 +22,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -36,12 +37,17 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class EditDeleteActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
@@ -64,6 +70,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
     DialogFragment timePicker;
     private boolean editingOccurred;
     private FusedLocationProviderClient fusedLocationClient;
+    private RequestQueue queue;
 
     private Calendar calendar;
     private Calendar innerCalendar;
@@ -91,6 +98,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
         TimeZone tz = TimeZone.getTimeZone("EDT");
         calendar =  Calendar.getInstance();
         calendar.setTimeZone(tz);
+        queue = Volley.newRequestQueue(this);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -203,8 +211,6 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
             }
         });
 
-
-
         descriptionEdit.setOnCapturedPointerListener(new View.OnCapturedPointerListener() {
             @Override
             public boolean onCapturedPointer(View view, MotionEvent event) {
@@ -217,14 +223,23 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
             @Override
             public void onClick(View v) {
 
-                addNewEventToLocal();
+                editEvent();
 
                 //sendEditRequest();
             }
         });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //delete event locally
+                App.userData.removeEvent(event);
+                sendDeleteRequest(event);
+            }
+        });
     }
 
-    public Event addNewEventToLocal() {
+    public Event editEvent() {
         String userID = App.userData.getUserID();
         String name = editName.getText().toString();
         String description = descriptionEdit.getText().toString();
@@ -238,7 +253,9 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
             }
         }
 
+        // build a new event
         Event newEvent = new Event(userID,name,description);
+        newEvent.set_id(event.get_id());
         newEvent.setDueDate(calendar.toInstant());
         newEvent.setPublic(false); //TODO set publicity
         newEvent.setRepeats(repeatCheck);
@@ -249,11 +266,65 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
         newEvent.setMustBeNear(mustBeNear);
         newEvent.setComplete(false);
 
-        App.userData.addEvent(newEvent);
+        //sendEditRequest(event);
 
+        // remove the old local event
         App.userData.removeEvent(event);
 
+        //add new event to local storage
+        App.userData.addEvent(newEvent);
+
         return newEvent;
+    }
+
+    public boolean sendDeleteRequest(final Event event) {
+        JSONObject eventData;
+
+        try {
+            eventData = new JSONObject()
+                    .put("_id", event.get_id());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        Log.i("EditDelete sending DELETE", event.get_id());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.DELETE,
+                getString(R.string.deleteReminder_url),
+                eventData, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("DELETE Response",response.toString());
+                        try {
+                            if (response.getBoolean("success")) {
+                                Toast.makeText(getApplicationContext(),"Successfully deleted event", Toast.LENGTH_SHORT).show();
+                                finish();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Error occured during deletion", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("Deletion error",error.toString());
+                }
+            }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+
+                headers.put("Authorization",App.userData.getToken());
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
+        return true;
     }
 
     public void fillEventData() {

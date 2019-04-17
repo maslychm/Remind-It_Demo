@@ -40,7 +40,7 @@ public class UserData extends Application {
         for (int i = 0; i < length; i++) {
             //Log.i("in UserDta: ", "comparing " + event.toString() + this.userEvents.get(i));
             if (event.get_id().equals(this.userEvents.get(i).get_id())){
-                Log.i("In UserData ", "removing object E:" + event.toString());
+                Log.i("In UserData ", "removing object E:" + event.get_id());
                 this.userEvents.remove(event);
                 return;
             }
