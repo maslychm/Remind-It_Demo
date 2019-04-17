@@ -1,6 +1,7 @@
 package com.maslychm.remind_it_demo;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,9 +40,12 @@ public class EventListAdapter extends ArrayAdapter<Event> {
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         String name =  getItem(position).getName();
         String description = getItem(position).getDescription();
         LocalDateTime dueDateTime = LocalDateTime.ofInstant(getItem(position).getDueDate(), ZoneOffset.UTC);
+        LocalDateTime curDateTime = LocalDateTime.now(ZoneOffset.systemDefault());
+
         String dueDate = "" + dueDateTime.getMonth().toString()
                 + " " + ((Integer)dueDateTime.getDayOfMonth()).toString()
                 + " at " + ((Integer)dueDateTime.getHour()).toString()
@@ -64,6 +68,17 @@ public class EventListAdapter extends ArrayAdapter<Event> {
         else id = mContext.getResources().getIdentifier("drawable/" + "clock", null, mContext.getPackageName());
 
         ((ImageView) convertView.findViewById(R.id.image)).setImageResource(id);
+
+        // this is today
+        if (dueDateTime.toLocalDate().equals(curDateTime.toLocalDate())) {
+            convertView.setBackgroundColor(Color.LTGRAY);
+        // overdue
+        } else if (curDateTime.toLocalDate().isAfter(dueDateTime.toLocalDate())) {
+            convertView.setBackgroundColor(Color.HSVToColor(new float[] { 19, 98, 84 }));
+        // plenty of time
+        } else {
+            convertView.setBackgroundColor(Color.HSVToColor(new float[] { 212, 91, 50 }));
+        }
 
         return convertView;
     }
