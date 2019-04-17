@@ -11,7 +11,10 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -39,6 +42,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 public class EditDeleteActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
@@ -58,7 +62,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
     private Button deleteButton;
 
     DialogFragment timePicker;
-    private boolean editingOccured = true;
+    private boolean editingOccurred;
     private FusedLocationProviderClient fusedLocationClient;
 
     private Calendar calendar;
@@ -76,9 +80,17 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_delete);
 
+        editingOccurred = false;
+
         event = (Event) getIntent().getSerializableExtra("Event");
 
         //Log.i("INSIDE EDIT DELETE", event.toString());
+
+        timePicker = new TimePickerFragment();
+        innerCalendar = Calendar.getInstance();
+        TimeZone tz = TimeZone.getTimeZone("EDT");
+        calendar =  Calendar.getInstance();
+        calendar.setTimeZone(tz);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -99,7 +111,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (editingOccured) {
+                if (editingOccurred) {
                     new AlertDialog.Builder(EditDeleteActivity.this)
                             .setMessage("Cancel editing and exit?")
                             .setCancelable(false)
@@ -110,18 +122,29 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
                             })
                             .setNegativeButton("No", null)
                             .show();
+                } else {
+                    finish();
                 }
+            }
+        });
+
+        dueDateButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                DialogFragment datePicker = new DatePickerFragment();
+                datePicker.show(getSupportFragmentManager(), "date picker");
             }
         });
 
         timePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timePicker = new TimePickerFragment();
+
                 timePicker.show(getSupportFragmentManager(),"time picker");
 
                 innerCalendar = Calendar.getInstance();
                 innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
+
+                editingOccurred = true;
             }
         });
 
@@ -145,6 +168,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
                                 }
                             });
                 }
+                editingOccurred = true;
             }
         });
 
@@ -152,6 +176,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 repeatCheck = isChecked;
+                editingOccurred = true;
             }
         });
 
@@ -159,14 +184,76 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mustBeNear = isChecked;
+                editingOccurred = true;
             }
         });
 
         openPickLocationButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 //openMapLocationPickerActivity(view);
+                editingOccurred = true;
             }
         });
+
+        editName.setOnCapturedPointerListener(new View.OnCapturedPointerListener() {
+            @Override
+            public boolean onCapturedPointer(View view, MotionEvent event) {
+                editingOccurred = true;
+                return false;
+            }
+        });
+
+
+
+        descriptionEdit.setOnCapturedPointerListener(new View.OnCapturedPointerListener() {
+            @Override
+            public boolean onCapturedPointer(View view, MotionEvent event) {
+                editingOccurred = true;
+                return false;
+            }
+        });
+
+        applyEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                addNewEventToLocal();
+
+                //sendEditRequest();
+            }
+        });
+    }
+
+    public Event addNewEventToLocal() {
+        String userID = App.userData.getUserID();
+        String name = editName.getText().toString();
+        String description = descriptionEdit.getText().toString();
+
+        // A non practical way to do this, but if set at this time, means the clock pick is already closed...
+        if (!(timePicker == null)) {
+            innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
+            if (!(innerCalendar == null)) {
+                calendar.set(Calendar.HOUR_OF_DAY, innerCalendar.get(Calendar.HOUR_OF_DAY));
+                calendar.set(Calendar.MINUTE, innerCalendar.get(Calendar.MINUTE));
+            }
+        }
+
+        Event newEvent = new Event(userID,name,description);
+        newEvent.setDueDate(calendar.toInstant());
+        newEvent.setPublic(false); //TODO set publicity
+        newEvent.setRepeats(repeatCheck);
+        newEvent.setRepeatUnit(""); //TODO set repeat unit
+        newEvent.setRepeatConst(0); //TODO set repeatConst
+        newEvent.setLongitude(longitude);
+        newEvent.setLatitude(latitude);
+        newEvent.setMustBeNear(mustBeNear);
+        newEvent.setComplete(false);
+
+        App.userData.addEvent(newEvent);
+
+        App.userData.removeEvent(event);
+
+        return newEvent;
     }
 
     public void fillEventData() {
@@ -184,7 +271,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
 
     @Override
     public void onBackPressed() {
-        if (editingOccured) {
+        if (editingOccurred) {
             new AlertDialog.Builder(this)
                     .setMessage("Cancel editing and exit?")
                     .setCancelable(false)
@@ -195,6 +282,8 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
                     })
                     .setNegativeButton("No", null)
                     .show();
+        } else {
+            EditDeleteActivity.super.onBackPressed();
         }
     }
 
@@ -206,5 +295,6 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
         dateString = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
 
         dueDateButton.setText(dateString);
+        editingOccurred = true;
     }
 }

@@ -197,9 +197,11 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         String description = editTextDescription.getText().toString();
 
         // A non practical way to do this, but if set at this time, means the clock pick is already closed...
-        innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
-        calendar.set(Calendar.HOUR_OF_DAY, innerCalendar.get(Calendar.HOUR_OF_DAY));
-        calendar.set(Calendar.MINUTE, innerCalendar.get(Calendar.MINUTE));
+        if (!(timePicker == null)) {
+            innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
+            calendar.set(Calendar.HOUR_OF_DAY, innerCalendar.get(Calendar.HOUR_OF_DAY));
+            calendar.set(Calendar.MINUTE, innerCalendar.get(Calendar.MINUTE));
+        }
 
         Event event = new Event(userID,name,description);
         event.setDueDate(calendar.toInstant());
