@@ -76,8 +76,6 @@ public class LoginPageActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Try logging in and open activity from withing it
-                // Because it's an async task, main thread will finish first
                 sendLoginRequest(login, password, view);
             }
         });
@@ -88,14 +86,9 @@ public class LoginPageActivity extends AppCompatActivity {
                 goToRegisterActivity(v);
             }
         });
-
-        // Ignore SSL Certificate Check
-        //handleSSLHandshake();
     }
 
     public void sendLoginRequest(String login, String password, final View view) {
-
-        // Create JSON Object for Login data
         JSONObject loginData;
 
         try {
@@ -106,7 +99,6 @@ public class LoginPageActivity extends AppCompatActivity {
         }
 
         Log.i("LoginPage Activity","Sending login request with: " + login + " : " + password);
-        //showProgress(true);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 getString(R.string.login_url),
@@ -120,10 +112,9 @@ public class LoginPageActivity extends AppCompatActivity {
                             Toast.makeText(LoginPageActivity.this, "Could not load user info", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        if (!fetchEvents(view)) {
+                        if (!(fetchReminders(view))) {
                             Toast.makeText(LoginPageActivity.this, "Could not load events", Toast.LENGTH_SHORT);
                         }
-                        //goToRemindersPageActivity(view);
                     } else {
                         Toast.makeText(LoginPageActivity.this, "Login or password incorrect", Toast.LENGTH_SHORT).show();
                     }
@@ -144,12 +135,10 @@ public class LoginPageActivity extends AppCompatActivity {
 
     public boolean saveUserData(JSONObject response) {
         try {
-            // Log response details for debugging
             Log.i("responseTOKEN ", response.getString("token"));
             Log.i("responseID", response.getJSONObject("user").getString("id"));
             Log.i("responseName", response.getJSONObject("user").getString("username"));
 
-            // Save into userData
             App.userData.setUserID(response.getJSONObject("user").getString("id"));
             App.userData.setUsername(response.getJSONObject("user").getString("username"));
             App.userData.setToken(response.getString("token"));
@@ -161,8 +150,8 @@ public class LoginPageActivity extends AppCompatActivity {
         return true;
     }
 
-    public boolean fetchEvents(final View view) {
-        RequestQueue queueEvents = Volley.newRequestQueue(getApplicationContext());
+    public boolean fetchReminders(final View view) {
+        //RequestQueue queueEvents = Volley.newRequestQueue(getApplicationContext());
         JSONArray getEventData;
 
         try {
@@ -179,16 +168,17 @@ public class LoginPageActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
 
-                Log.i("Fetch Events RESPONSE: ",response.toString());
+                Log.i("Fetch Reminders RESPONSE: ",response.toString());
                 if (response != null) {
                     App.userData.setUserEvents(response);
-                    goToRemindersPageActivity(view);
+                    fetchAllEvents(view);
+                    //goToRemindersPageActivity(view);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Login page volley call error",error.toString());
+                Log.e("Login page volley fetch reminders error",error.toString());
             }
         }) {
             @Override
@@ -199,9 +189,51 @@ public class LoginPageActivity extends AppCompatActivity {
                 return headers;
             }
         };
-        queueEvents.add(jsonObjectRequest);
+        queue.add(jsonObjectRequest);
 
-        //showProgress(false);
+        return true;
+    }
+
+    public boolean fetchAllEvents(final View view) {
+        //RequestQueue queueEvents = Volley.newRequestQueue(getApplicationContext());
+        JSONArray getEventData;
+
+        try {
+            getEventData = new JSONArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                getString(R.string.fetchAllEvents) + "/",
+                getEventData, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+
+                Log.i("Fetch Events RESPONSE: ",response.toString());
+                if (response != null) {
+                    App.userData.setNearbyEvents(response);
+                    goToRemindersPageActivity(view);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Login page volley fetch events error",error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+
+                headers.put("Authorization",App.userData.getToken());
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+
         return true;
     }
 

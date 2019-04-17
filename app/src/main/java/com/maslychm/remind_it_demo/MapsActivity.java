@@ -16,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -34,6 +35,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location location;
     private CameraPosition cameraPosition;
     private ArrayList<Event> userEvents;
+    private ArrayList<Event> publicEvents;
 
     private TextView titleView;
     private TextView descriptionView;
@@ -69,6 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         criteria = new Criteria();
         userEvents = App.userData.getUserEvents();
+        publicEvents = App.userData.getNearbyEvents();
 
         titleView = (TextView) findViewById(R.id.titleView);
         descriptionView = (TextView) findViewById(R.id.descriptionView);
@@ -113,6 +116,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         + " " + ((Integer)dueDateTime.getDayOfMonth()).toString()
                         + " at " + ((Integer)dueDateTime.getHour()).toString()
                         + ":" + ((Integer)dueDateTime.getMinute()).toString();
+
+                if (((Integer)dueDateTime.getMinute()).toString().startsWith("0")) {
+                    dueDate += "0";
+                }
                 dueDateView.setText(dueDate);
 
                 return true;
@@ -120,12 +127,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         placeMarkers();
+        placePublicMarkers();
     }
 
     public void placeMarkers() {
         mMap.clear();
-        for (Event event: userEvents)
-        {
+        for (Event event: userEvents) {
             Double lat = event.getLatitude();
             Double lng = event.getLongitude();
 
@@ -136,5 +143,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             markerMap.put(marker, event);
         }
+    }
+
+    public void placePublicMarkers() {
+         for (Event event: publicEvents) {
+             Double lat = event.getLatitude();
+             Double lng = event.getLongitude();
+
+             LatLng latlng = new LatLng(lat,lng);
+             MarkerOptions markerOptions = new MarkerOptions().position(latlng).title(event.getName());
+             Marker marker = mMap.addMarker(markerOptions);
+             marker.setSnippet(event.getDescription());
+             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+
+             markerMap.put(marker, event);
+         }
     }
 }

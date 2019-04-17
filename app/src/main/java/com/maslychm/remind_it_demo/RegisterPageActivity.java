@@ -63,9 +63,6 @@ public class RegisterPageActivity extends AppCompatActivity {
                 password = passwordRegEdit.getText().toString();
                 email = emailRegEdit.getText().toString();
 
-                Log.i("pws get here -----------------------","before");
-                Log.i(login,email);
-
                 if (login == null || login.isEmpty()
                         || password == null || password.isEmpty()
                         || email == null || email.isEmpty()) {
@@ -78,15 +75,11 @@ public class RegisterPageActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Enter login and password between 5 and 16 characters", Toast.LENGTH_LONG).show();
                     return;
                 }
-                Log.i("emails get here -----------------------","before email check");
-                Log.i(login,email);
+
                 if (!(email.endsWith(".com") || email.endsWith(".net") || email.endsWith(".me") || email.endsWith(".org") || email.contains("@"))) {
                         Toast.makeText(getApplicationContext(), "Enter a valid email", Toast.LENGTH_LONG).show();
                         return;
                 }
-
-                Log.i("pws get here -----------------------","after");
-                Log.i(login,email);
 
                 // Call to DB register request
                 sendRegisterRequest(login, email, password);
@@ -120,15 +113,12 @@ public class RegisterPageActivity extends AppCompatActivity {
                 Log.i("reg response from server", response.toString());
                 try {
                     if (response.getBoolean("success")) {
-                        Log.i("responseID",response.getJSONObject("user").getString("id"));
-                        Log.i("responseName",response.getJSONObject("user").getString("username"));
-
                         // Save into userData
                         App.userData.setUserID(response.getJSONObject("user").getString("id"));
                         App.userData.setUsername(response.getJSONObject("user").getString("username"));
 
-                        Toast.makeText(RegisterPageActivity.this, "Successfully registered user " + response.getJSONObject("user").getString("username"), Toast.LENGTH_SHORT).show();
-
+                        Toast.makeText(RegisterPageActivity.this, "Successfully registered " + response.getJSONObject("user").getString("username"), Toast.LENGTH_LONG).show();
+                        finish();
                     } else {
                         if ("User already exists.".equals(response.getString("msg"))) {
                             Toast.makeText(RegisterPageActivity.this, "User Already Exists", Toast.LENGTH_SHORT).show();

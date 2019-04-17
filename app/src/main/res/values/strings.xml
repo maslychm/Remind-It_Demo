@@ -20,5 +20,6 @@
     <string name="fetchReminders_url">https://remind-it-236717.appspot.com/events/read/</string>
     <string name="deleteReminder_url">https://remind-it-236717.appspot.com/events/delete/</string>
     <string name="editReminder_url">https://remind-it-236717.appspot.com/events/update/</string>
+    <string name="fetchAllEvents">https://remind-it-236717.appspot.com/events/get/all</string>
     <string name="title_activity_pick_location">Map</string>
 </resources>

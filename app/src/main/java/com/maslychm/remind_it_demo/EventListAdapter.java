@@ -41,6 +41,7 @@ public class EventListAdapter extends ArrayAdapter<Event> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        // Get the passed element (Event event)
         String name =  getItem(position).getName();
         String description = getItem(position).getDescription();
         LocalDateTime dueDateTime = LocalDateTime.ofInstant(getItem(position).getDueDate(), ZoneOffset.UTC);
@@ -50,6 +51,10 @@ public class EventListAdapter extends ArrayAdapter<Event> {
                 + " " + ((Integer)dueDateTime.getDayOfMonth()).toString()
                 + " at " + ((Integer)dueDateTime.getHour()).toString()
                 + ":" + ((Integer)dueDateTime.getMinute()).toString();
+
+        if (((Integer)dueDateTime.getMinute()).toString().startsWith("0")) {
+            dueDate += "0";
+        }
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);

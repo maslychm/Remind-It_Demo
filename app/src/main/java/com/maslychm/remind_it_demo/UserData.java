@@ -145,4 +145,36 @@ public class UserData extends Application {
     public void setNearbyEvents(ArrayList<Event> nearbyEvents) {
         this.nearbyEvents = nearbyEvents;
     }
+
+    public void setNearbyEvents(JSONArray publicEvents) {
+        int total = publicEvents.length();
+        int i = 0;
+        JSONObject jsonEvent;
+        Event tempEvent;
+        ArrayList<Event> events = new ArrayList<Event>(total);
+
+        for (i = 0; i < total; i++) {
+            try {
+                jsonEvent = publicEvents.getJSONObject(i);
+                tempEvent = new Event(App.userData.userID, jsonEvent.getString("name"),
+                        jsonEvent.getString("description"));
+                tempEvent.set_id(jsonEvent.getString("_id"));
+                tempEvent.setDueDate(Instant.parse(jsonEvent.getString("dueDate")));
+                tempEvent.setPublic(jsonEvent.getBoolean("isPublic"));
+                tempEvent.setLatitude(jsonEvent.getDouble("lat"));
+                tempEvent.setLongitude(jsonEvent.getDouble("lng"));
+                tempEvent.setRepeats(jsonEvent.getBoolean("repeats"));
+                tempEvent.setRepeatUnit(jsonEvent.getString("repeatUnit"));
+                tempEvent.setRepeatConst(jsonEvent.getInt("repeatConst"));
+                tempEvent.setMustBeNear(jsonEvent.getBoolean("mustBeNear"));
+                tempEvent.setComplete(jsonEvent.getBoolean("isComplete"));
+
+                events.add(tempEvent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        this.setNearbyEvents(events);
+    }
 }
