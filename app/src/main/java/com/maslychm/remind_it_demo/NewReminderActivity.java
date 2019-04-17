@@ -256,6 +256,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 try {
                     if (response.getBoolean("success")) {
                         Toast.makeText(getApplicationContext(), "Event successfully added", Toast.LENGTH_SHORT).show();
+                        finish();
                     } else {
                         Toast.makeText(getApplicationContext(), "Event not created on DB", Toast.LENGTH_SHORT).show();
                     }
@@ -314,13 +315,5 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 .build();
 
         notificationManager.notify(1,notification);
-    }
-
-    public Calendar getCalendar() {
-        return calendar;
-    }
-
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
     }
 }

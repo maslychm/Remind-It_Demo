@@ -6,6 +6,7 @@ import androidx.fragment.app.DialogFragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -13,6 +14,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -30,9 +33,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.text.DateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
-public class EditDeleteActivity extends AppCompatActivity {
+public class EditDeleteActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     Event event;
 
@@ -41,8 +49,8 @@ public class EditDeleteActivity extends AppCompatActivity {
     private Button dueDateButton;
     private Switch repeatSwitch;
     private Switch nearbySwitch;
-    private Button useLocationButton;
-    private Button openLocPickerButton;
+    private Button useCurrentLocationButton;
+    private Button openPickLocationButton;
     private TextView latLngView;
     private Button cancelButton;
     private Button applyEditButton;
@@ -55,6 +63,8 @@ public class EditDeleteActivity extends AppCompatActivity {
 
     private Calendar calendar;
     private Calendar innerCalendar;
+
+    String dateString;
 
     boolean repeatCheck = false;
     boolean mustBeNear = false;
@@ -77,13 +87,15 @@ public class EditDeleteActivity extends AppCompatActivity {
         dueDateButton = findViewById(R.id.setDueDateButton);
         repeatSwitch = findViewById(R.id.repeatSwitch);
         nearbySwitch = findViewById(R.id.nearbySwitch);
-        useLocationButton = findViewById(R.id.useCurrentLocationButton);
-        openLocPickerButton = findViewById(R.id.openLocPicker);
+        useCurrentLocationButton = findViewById(R.id.useCurrentLocationButton);
+        openPickLocationButton = findViewById(R.id.openLocPicker);
         latLngView = findViewById(R.id.latlong);
         cancelButton = findViewById(R.id.cancelButton);
         applyEditButton = findViewById(R.id.applyEdit);
         timePickerButton = findViewById(R.id.timePicker);
         deleteButton = findViewById(R.id.delete);
+
+        fillEventData();
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -113,7 +125,7 @@ public class EditDeleteActivity extends AppCompatActivity {
             }
         });
 
-        useLocationButton.setOnClickListener(new View.OnClickListener() {
+        useCurrentLocationButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // If location permissions are granted and location returned, save it
                 if (ContextCompat.checkSelfPermission(EditDeleteActivity.this,
@@ -135,6 +147,39 @@ public class EditDeleteActivity extends AppCompatActivity {
                 }
             }
         });
+
+        repeatSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                repeatCheck = isChecked;
+            }
+        });
+
+        nearbySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mustBeNear = isChecked;
+            }
+        });
+
+        openPickLocationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                //openMapLocationPickerActivity(view);
+            }
+        });
+    }
+
+    public void fillEventData() {
+        editName.setText(event.getName());
+        descriptionEdit.setText(event.getDescription());
+        ZonedDateTime zdt = ZonedDateTime.ofInstant(event.getDueDate(), ZoneId.systemDefault());
+        calendar = GregorianCalendar.from(zdt);
+        dateString = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
+        dueDateButton.setText(dateString);
+        repeatSwitch.setChecked(event.isRepeats());
+        nearbySwitch.setChecked(event.isMustBeNear());
+        String latLngText = "" + event.getLatitude() + event.getLongitude();
+        latLngView.setText(latLngText);
     }
 
     @Override
@@ -151,5 +196,15 @@ public class EditDeleteActivity extends AppCompatActivity {
                     .setNegativeButton("No", null)
                     .show();
         }
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        dateString = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
+
+        dueDateButton.setText(dateString);
     }
 }
