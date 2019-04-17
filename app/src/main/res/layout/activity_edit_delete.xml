@@ -11,10 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="76dp"
         android:layout_marginEnd="8dp"
         android:hint="Reminder Title"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,10 +24,10 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:hint="Description"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_text_name" />
 
@@ -53,7 +54,7 @@
         app:layout_constraintTop_toBottomOf="@+id/timePicker" />
 
     <Switch
-        android:id="@+id/nearbySwitch"
+        android:id="@+id/nearSwitch"
         android:layout_width="200dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
@@ -63,30 +64,27 @@
         app:layout_constraintTop_toBottomOf="@+id/repeatSwitch" />
 
     <Button
-        android:id="@+id/useLocationButton"
+        android:id="@+id/useCurrentLocationButton"
         android:layout_width="200dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
         android:text="USE CURRENT LOCATION"
         app:layout_constraintEnd_toStartOf="@+id/latlong"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nearbySwitch" />
+        app:layout_constraintTop_toBottomOf="@+id/nearSwitch" />
 
     <Button
         android:id="@+id/openLocPicker"
-        android:layout_width="200dp"
+        android:layout_width="170dp"
         android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="147dp"
         android:text="OPEN LOCATION PICKER"
-        app:layout_constraintEnd_toStartOf="@+id/latlong"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nearbySwitch" />
+        app:layout_constraintStart_toEndOf="@+id/nearSwitch"
+        app:layout_constraintTop_toBottomOf="@+id/setDueDateButton" />
 
 
     <TextView
@@ -108,12 +106,12 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/addReminder"
+        android:id="@+id/applyEdit"
         android:layout_width="180dp"
         android:layout_height="60dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="Add reminder"
+        android:text="Edit Reminder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -126,5 +124,15 @@
         android:text="SET TIME"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/setDueDateButton" />
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="DELETE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

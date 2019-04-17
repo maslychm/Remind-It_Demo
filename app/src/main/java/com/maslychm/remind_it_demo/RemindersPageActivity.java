@@ -56,6 +56,7 @@ public class RemindersPageActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(RemindersPageActivity.this, "" + App.userData.getUserEvents().get(position), Toast.LENGTH_LONG).show();
+                openEditDeleteActivity(view, App.userData.getUserEvents().get(position));
             }
         });
     }
@@ -87,6 +88,12 @@ public class RemindersPageActivity extends AppCompatActivity {
 
     public void openMap(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
+
+    public void openEditDeleteActivity(View view, Event event) {
+        Intent intent = new Intent(this, EditDeleteActivity.class);
+        intent.putExtra("Event", event);
         startActivity(intent);
     }
 }

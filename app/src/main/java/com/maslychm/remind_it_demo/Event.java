@@ -2,11 +2,12 @@ package com.maslychm.remind_it_demo;
 
 import android.app.Application;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 import androidx.annotation.NonNull;
 
-public class Event extends Application {
+public class Event extends Application implements Serializable {
     private String userID;
     private boolean isPublic;
     private String name;

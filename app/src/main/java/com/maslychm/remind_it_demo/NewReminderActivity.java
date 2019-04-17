@@ -59,7 +59,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     private Button buttonCancel;
     private Button buttonCurrentLocation;
     private Switch repeatSwitch;
-    private Switch addLocationSwitch;
+    private Switch nearbySwitch;
     private Button openPickLocationButton;
     private Button setDueTimeButton;
 
@@ -99,7 +99,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         buttonSetDueDate = (Button) findViewById(R.id.setDueDateButton);
         buttonCurrentLocation = (Button) findViewById(R.id.useLocationButton);
         repeatSwitch = (Switch) findViewById(R.id.repeatSwitch);
-        addLocationSwitch = (Switch) findViewById(R.id.addLocationSwitch);
+        nearbySwitch = (Switch) findViewById(R.id.nearbySwitch);
         openPickLocationButton = (Button) findViewById(R.id.openLocPicker);
         setDueTimeButton = (Button) findViewById(R.id.timePicker);
 
@@ -166,7 +166,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
             }
         });
 
-        addLocationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        nearbySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mustBeNear = isChecked;

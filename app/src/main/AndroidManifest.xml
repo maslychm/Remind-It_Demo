@@ -8,21 +8,21 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.maslychm.remind_it_demo.App"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:usesCleartextTraffic="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name="com.maslychm.remind_it_demo.NewReminderActivity"></activity>
-        <!--         android:theme="@style/AppTheme"> -->
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".EditDeleteActivity"></activity>
+        <activity android:name=".NewReminderActivity" /> <!-- android:theme="@style/AppTheme"> -->
         <activity
-            android:name="com.maslychm.remind_it_demo.RemindersPageActivity"
+            android:name=".RemindersPageActivity"
             android:label="@string/title_activity_reminders_page"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--
@@ -38,22 +38,23 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.maslychm.remind_it_demo.MapsActivity"
+            android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name="com.maslychm.remind_it_demo.RegisterPageActivity"
-            android:parentActivityName="com.maslychm.remind_it_demo.LoginPageActivity" />
+            android:name=".RegisterPageActivity"
+            android:parentActivityName=".LoginPageActivity" />
         <activity
-            android:name="com.maslychm.remind_it_demo.LoginPageActivity"
-            android:parentActivityName="com.maslychm.remind_it_demo.MainActivity" />
-        <activity android:name="com.maslychm.remind_it_demo.MainActivity">
+            android:name=".LoginPageActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="com.maslychm.remind_it_demo.NotificationReceiver"/>
+
+        <receiver android:name=".NotificationReceiver" />
     </application>
 
 </manifest>
