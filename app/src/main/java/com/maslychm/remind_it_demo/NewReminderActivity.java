@@ -1,6 +1,7 @@
 package com.maslychm.remind_it_demo;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -28,9 +30,28 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.compat.GeoDataClient;
+//import com.google.android.libraries.places.compat.Place;
+import com.google.android.gms.location.places.Place;
+import com.google.android.libraries.places.compat.PlaceDetectionClient;
+import com.google.android.libraries.places.compat.PlaceLikelihood;
+import com.google.android.libraries.places.compat.PlaceLikelihoodBufferResponse;
+import com.google.android.libraries.places.compat.PlacePhotoMetadata;
+import com.google.android.libraries.places.compat.PlacePhotoMetadataBuffer;
+import com.google.android.libraries.places.compat.PlacePhotoMetadataResponse;
+import com.google.android.libraries.places.compat.PlacePhotoResponse;
+import com.google.android.libraries.places.compat.Places;
+import com.google.android.libraries.places.compat.ui.PlaceAutocomplete;
+import com.google.android.libraries.places.compat.ui.PlaceAutocompleteFragment;
+import com.google.android.libraries.places.compat.ui.PlaceSelectionListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,6 +97,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     private Calendar innerCalendar;
     boolean repeatCheck = false;
     boolean mustBeNear = false;
+    Place place;
     double latitude = 0.0f;
     double longitude = 0.0f;
 
@@ -172,10 +194,18 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 mustBeNear = isChecked;
             }
         });
-
+        final Activity thisOne = this;
         openPickLocationButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                //openMapLocationPickerActivity(view);
+                try {
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    startActivityForResult(builder.build(thisOne), 1);
+                } catch (GooglePlayServicesRepairableException e) {
+                    GooglePlayServicesUtil.getErrorDialog(e.getConnectionStatusCode(), thisOne, 0);
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                    //showResponse(getString(R.string.google_play_services_error));
+                }
             }
         });
     }
@@ -319,5 +349,29 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 .build();
 
         notificationManager.notify(1,notification);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        double lat = 0, lng = 0;
+        Place place;
+        if (resultCode == Activity.RESULT_OK)
+        {
+            if (requestCode == 1) {
+                place = PlacePicker.getPlace(this, data);
+                LatLng latLng = place.getLatLng();
+                lat = latLng.latitude;
+                lng = latLng.longitude;
+            }
+            else if(requestCode == 2)  {
+                lat = (double) data.getExtras().get("location_lat");
+                lng = (double) data.getExtras().get("location_lng");
+            }
+                latitude = lat;
+                longitude = lng;
+                System.out.println("LAT: " + lat + " LONG: " + lng);
+        }
     }
 }
