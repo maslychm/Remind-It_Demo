@@ -292,7 +292,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.DELETE,
-                getString(R.string.deleteReminder_url),
+                getString(R.string.deleteReminder_url), // + event.get_id(),
                 eventData, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -319,6 +319,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
                 Map<String, String> headers = new HashMap<>();
 
                 headers.put("Authorization",App.userData.getToken());
+                headers.put("Content-Type","application/json");
                 return headers;
             }
         };
