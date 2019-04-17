@@ -20,4 +20,6 @@
     <string name="fetchReminders_url">https://themeanteam.site/events/read/</string>
     <string name="deleteReminder_url">https://themeanteam.site/events/delete/</string>
     <string name="editReminder_url"></string>
+    <string name="title_activity_choose_location">Choose Location</string>
+    <string name="title_activity_map_picker">Map</string>
 </resources>
