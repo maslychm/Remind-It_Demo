@@ -8,6 +8,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,7 +54,8 @@ import java.util.TimeZone;
 
 public class EditDeleteActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
-    Event event;
+    Event passedEvent;
+    private Event event;
 
     private EditText editName;
     private EditText descriptionEdit;
@@ -89,7 +92,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
 
         editingOccurred = false;
 
-        event = (Event) getIntent().getSerializableExtra("Event");
+        passedEvent = (Event) getIntent().getSerializableExtra("Event");
 
         //Log.i("INSIDE EDIT DELETE", event.toString());
 
@@ -196,13 +199,6 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
             }
         });
 
-        openPickLocationButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                //openMapLocationPickerActivity(view);
-                editingOccurred = true;
-            }
-        });
-
         editName.setOnCapturedPointerListener(new View.OnCapturedPointerListener() {
             @Override
             public boolean onCapturedPointer(View view, MotionEvent event) {
@@ -222,10 +218,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
         applyEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 editEvent();
-
-                //sendEditRequest();
             }
         });
 
@@ -233,10 +226,23 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
             @Override
             public void onClick(View v) {
                 //delete event locally
-                App.userData.removeEvent(event);
-                sendDeleteRequest(event);
+                Log.i("ERROR HERE IF NULL", ((Event) getIntent().getSerializableExtra("Event")).toString());
+                passedEvent = (Event) getIntent().getSerializableExtra("Event");
+                App.userData.removeEvent(passedEvent);
+                sendDeleteRequest(passedEvent);
             }
         });
+
+        openPickLocationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                goToPickLocationActivity(view);
+            }
+        });
+    }
+
+    public void goToPickLocationActivity(View view) {
+        Intent intent = new Intent(this, PickLocationActivity.class);
+        startActivityForResult(intent, 1);
     }
 
     public Event editEvent() {
@@ -244,20 +250,24 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
         String name = editName.getText().toString();
         String description = descriptionEdit.getText().toString();
 
+        Event newEvent = new Event(userID,name,description);
+        newEvent.setDueDate(passedEvent.getDueDate());
+
         // A non practical way to do this, but if set at this time, means the clock pick is already closed...
         if (!(timePicker == null)) {
             innerCalendar = ((TimePickerFragment) timePicker).getCalendar();
             if (!(innerCalendar == null)) {
                 calendar.set(Calendar.HOUR_OF_DAY, innerCalendar.get(Calendar.HOUR_OF_DAY));
                 calendar.set(Calendar.MINUTE, innerCalendar.get(Calendar.MINUTE));
+                newEvent.setDueDate(calendar.toInstant());
             }
         }
 
         // build a new event
-        Event newEvent = new Event(userID,name,description);
-        newEvent.set_id(event.get_id());
-        newEvent.setDueDate(calendar.toInstant());
-        newEvent.setPublic(false); //TODO set publicity
+
+        newEvent.set_id(passedEvent.get_id());
+        //newEvent.setDueDate(calendar.toInstant());
+        newEvent.setPublic(false);
         newEvent.setRepeats(repeatCheck);
         newEvent.setRepeatUnit(""); //TODO set repeat unit
         newEvent.setRepeatConst(0); //TODO set repeatConst
@@ -269,7 +279,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
         sendEditRequest(newEvent);
 
         // remove the old local event
-        App.userData.removeEvent(event);
+        App.userData.removeEvent(passedEvent);
 
         //add new event to local storage
         App.userData.addEvent(newEvent);
@@ -356,7 +366,7 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.DELETE,
-                getString(R.string.deleteReminder_url),// + event.get_id(),
+                getString(R.string.deleteReminder_url) + event.get_id(),
                 eventData, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -383,8 +393,8 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
                 Map<String, String> headers = new HashMap<>();
 
                 headers.put("Authorization",App.userData.getToken());
-                //headers.put("Content-Type","application/json");
-                headers.put("_id",event.get_id());
+                headers.put("Content-Type","application/json");
+                //headers.put("_id",event.get_id());
                 return headers;
             }
         };
@@ -394,15 +404,15 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
     }
 
     public void fillEventData() {
-        editName.setText(event.getName());
-        descriptionEdit.setText(event.getDescription());
-        ZonedDateTime zdt = ZonedDateTime.ofInstant(event.getDueDate(), ZoneId.systemDefault());
+        editName.setText(passedEvent.getName());
+        descriptionEdit.setText(passedEvent.getDescription());
+        ZonedDateTime zdt = ZonedDateTime.ofInstant(passedEvent.getDueDate(), ZoneId.systemDefault());
         calendar = GregorianCalendar.from(zdt);
         dateString = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
         dueDateButton.setText(dateString);
-        repeatSwitch.setChecked(event.isRepeats());
-        nearbySwitch.setChecked(event.isMustBeNear());
-        String latLngText = "" + event.getLatitude() + event.getLongitude();
+        repeatSwitch.setChecked(passedEvent.isRepeats());
+        nearbySwitch.setChecked(passedEvent.isMustBeNear());
+        String latLngText = "" + passedEvent.getLatitude() + passedEvent.getLongitude();
         latLngView.setText(latLngText);
     }
 
@@ -433,5 +443,18 @@ public class EditDeleteActivity extends AppCompatActivity implements DatePickerD
 
         dueDateButton.setText(dateString);
         editingOccurred = true;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+                LatLng pos = (LatLng) data.getParcelableExtra("LatLng");
+                latitude = pos.latitude;
+                longitude = pos.longitude;
+
+                latLngView.setText("" + pos.latitude + "\n" + pos.longitude);
+            }
+        }
     }
 }

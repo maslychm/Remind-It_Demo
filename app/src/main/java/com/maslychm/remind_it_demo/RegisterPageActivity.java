@@ -63,16 +63,33 @@ public class RegisterPageActivity extends AppCompatActivity {
                 password = passwordRegEdit.getText().toString();
                 email = emailRegEdit.getText().toString();
 
-                if (login == null || login.isEmpty() || password == null || password.isEmpty() || email == null || email.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Please fill in login, email and password",Toast.LENGTH_SHORT).show();
+                Log.i("pws get here -----------------------","before");
+                Log.i(login,email);
+
+                if (login == null || login.isEmpty()
+                        || password == null || password.isEmpty()
+                        || email == null || email.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Please fill in login, email and password",Toast.LENGTH_LONG).show();
                     return;
                 }
 
+                if (login.length() < 5 || login.length() > 16
+                        || password.length() < 5 || password.length() > 16) {
+                    Toast.makeText(getApplicationContext(), "Enter login and password between 5 and 16 characters", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Log.i("emails get here -----------------------","before email check");
+                Log.i(login,email);
+                if (!(email.endsWith(".com") || email.endsWith(".net") || email.endsWith(".me") || email.endsWith(".org") || email.contains("@"))) {
+                        Toast.makeText(getApplicationContext(), "Enter a valid email", Toast.LENGTH_LONG).show();
+                        return;
+                }
+
+                Log.i("pws get here -----------------------","after");
+                Log.i(login,email);
+
                 // Call to DB register request
                 sendRegisterRequest(login, email, password);
-                // Toast.makeText(getApplicationContext(), "Thank you for registering " + login,Toast.LENGTH_SHORT).show();
-
-                //goToLoginActivity(view);
             }
         });
 
@@ -82,8 +99,6 @@ public class RegisterPageActivity extends AppCompatActivity {
                 goToLoginActivity(v);
             }
         });
-
-        handleSSLHandshake();
     }
 
     public void sendRegisterRequest(String login, String email, String password) {
@@ -136,38 +151,5 @@ public class RegisterPageActivity extends AppCompatActivity {
 
     public void goToLoginActivity(View view) {
         finish();
-    }
-
-    /**
-     * Enables https connections
-     */
-    @SuppressLint("TrulyRandom")
-    public static void handleSSLHandshake() {
-        try {
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-
-                @Override
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-
-                @Override
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            }};
-
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String arg0, SSLSession arg1) {
-                    return true;
-                }
-            });
-        }
-        catch (Exception ignored) { }
     }
 }

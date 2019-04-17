@@ -30,15 +30,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.location.places.Place;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,9 +79,10 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
     private Calendar innerCalendar;
     boolean repeatCheck = false;
     boolean mustBeNear = false;
-    Place place;
     double latitude = 0.0f;
     double longitude = 0.0f;
+
+    private Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,21 +177,17 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 mustBeNear = isChecked;
             }
         });
-        final Activity thisOne = this;
+
         openPickLocationButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                try {
-                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                    startActivityForResult(builder.build(NewReminderActivity.this), 1);
-                    Log.i("attempt to start picker","hello");
-                } catch (GooglePlayServicesRepairableException e) {
-                    GooglePlayServicesUtil.getErrorDialog(e.getConnectionStatusCode(), NewReminderActivity.this, 0);
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                    //showResponse(getString(R.string.google_play_services_error));
-                }
+                goToPickLocationActivity(view);
             }
         });
+    }
+
+    public void goToPickLocationActivity(View view) {
+        Intent intent = new Intent(this, PickLocationActivity.class);
+        startActivityForResult(intent, 1);
     }
 
     @Override
@@ -221,10 +213,10 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
             calendar.set(Calendar.MINUTE, innerCalendar.get(Calendar.MINUTE));
         }
 
-        Event event = new Event(userID,name,description);
+        event = new Event(userID,name,description);
         //event.set_id();
         event.setDueDate(calendar.toInstant());
-        event.setPublic(false); //TODO set publicity
+        event.setPublic(false);
         event.setRepeats(repeatCheck);
         event.setRepeatUnit(""); //TODO set repeat unit
         event.setRepeatConst(0); //TODO set repeatConst
@@ -233,15 +225,10 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         event.setMustBeNear(mustBeNear);
         event.setComplete(false);
 
-        App.userData.addEvent(event);
-
         boolean success = sendAddReminderRequest(event);
-        if(success) {
-            finish();
-        }
     }
 
-    public boolean sendAddReminderRequest(final Event event) {
+    public boolean sendAddReminderRequest(Event event) {
 
         // Create JSON Object for Event data
         JSONObject eventData;
@@ -277,8 +264,7 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
                 try {
                     if (response.getBoolean("success")) {
                         Toast.makeText(getApplicationContext(), "Event successfully added", Toast.LENGTH_SHORT).show();
-                        event.set_id(response.getString("_id"));
-                        finish();
+                        setEventID(response.getJSONObject("event").getString("_id"));
                     } else {
                         Toast.makeText(getApplicationContext(), "Event not created on DB", Toast.LENGTH_SHORT).show();
                     }
@@ -304,6 +290,12 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         queue.add(jsonObjectRequest);
 
         return true;
+    }
+
+    public void setEventID(String _id) {
+        event.set_id(_id);
+        App.userData.addEvent(event);
+        finish();
     }
 
     // Send title and message as a notification through channel_1_ID
@@ -339,29 +331,16 @@ public class NewReminderActivity extends AppCompatActivity implements DatePicker
         notificationManager.notify(1,notification);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        double lat = 0, lng = 0;
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+                LatLng pos = (LatLng) data.getParcelableExtra("LatLng");
+                latitude = pos.latitude;
+                longitude = pos.longitude;
 
-        Log.i("onActivityResult","yes");
-        Place place;
-        if (resultCode == Activity.RESULT_OK)
-        {
-            if (requestCode == 1) {
-                place = PlacePicker.getPlace(this, data);
-                LatLng latLng = place.getLatLng();
-                lat = latLng.latitude;
-                lng = latLng.longitude;
+                displayCoord.setText("" + pos.latitude + "\n" + pos.longitude);
             }
-            else if(requestCode == 2)  {
-                lat = (double) data.getExtras().get("location_lat");
-                lng = (double) data.getExtras().get("location_lng");
-            }
-                latitude = lat;
-                longitude = lng;
-                System.out.println("LAT: " + lat + " LONG: " + lng);
         }
     }
 }

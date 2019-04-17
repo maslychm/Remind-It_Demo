@@ -37,14 +37,17 @@ public class UserData extends Application {
         Log.i("In UserData ", "remove called:" + event.toString());
         int length = this.userEvents.size();
 
+        Log.i("DELETE Number of events before :",((Integer)App.userData.userEvents.size()).toString());
         for (int i = 0; i < length; i++) {
             //Log.i("in UserDta: ", "comparing " + event.toString() + this.userEvents.get(i));
             if (event.get_id().equals(this.userEvents.get(i).get_id())){
                 Log.i("In UserData ", "removing object E:" + event.get_id());
-                this.userEvents.remove(event);
-                return;
+                App.userData.userEvents.remove(this.userEvents.get(i));
+                break;
             }
         }
+        Log.i("DELETE Number of events after :",((Integer)App.userData.userEvents.size()).toString());
+        return;
     }
 
     public String getUserID() {

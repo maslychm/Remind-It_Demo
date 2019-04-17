@@ -31,7 +31,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textSize="32dp"
-            android:text="Reminder title" />
+            android:gravity="center_horizontal"
+            android:text="Title" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -42,7 +43,8 @@
                 android:layout_weight="50"
                 android:layout_width="18dp"
                 android:layout_height="match_parent"
-                android:text="Reminder description" />
+                android:gravity="center_horizontal"
+                android:text="Description" />
 
             <TextView
                 android:id="@+id/dueDateView"
@@ -50,7 +52,8 @@
                 android:layout_weight="50"
                 android:layout_width="18dp"
                 android:layout_height="match_parent"
-                android:text="Due date and time" />
+                android:gravity="center_horizontal"
+                android:text="Due date" />
         </LinearLayout>
     </LinearLayout>
 

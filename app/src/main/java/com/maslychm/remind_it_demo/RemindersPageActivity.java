@@ -78,6 +78,7 @@ public class RemindersPageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         adapter.swapItems(App.userData.getUserEvents());
     }
 

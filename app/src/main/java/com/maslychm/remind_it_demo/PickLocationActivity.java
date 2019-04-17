@@ -4,11 +4,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,36 +25,29 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class PickLocationActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private LocationManager locationManager;
+    private double latitude;
+    private double longitude;
     private Criteria criteria;
     private Location location;
     private CameraPosition cameraPosition;
-    private ArrayList<Event> userEvents;
+    private LocationManager locationManager;
+    private TextView positionView;
+    LatLng position;
 
-    private TextView titleView;
-    private TextView descriptionView;
-    private TextView dueDateView;
-
-    private HashMap<Marker, Event> markerMap;
+    private Button saveLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_pick_location);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
 
     /**
      * Manipulates the map once available.
@@ -64,19 +61,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //mMap.setMyLocationEnabled(true);
-
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         criteria = new Criteria();
-        userEvents = App.userData.getUserEvents();
+        positionView = findViewById(R.id.position);
+        saveLocation = findViewById(R.id.saveButton);
 
-        titleView = (TextView) findViewById(R.id.titleView);
-        descriptionView = (TextView) findViewById(R.id.descriptionView);
-        dueDateView = (TextView) findViewById(R.id.dueDateView);
+        saveLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra("LatLng",position);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
 
-        markerMap = new HashMap<>();
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                mMap.clear();
+                MarkerOptions markerOptions = new MarkerOptions().position(point);
+                Marker marker = mMap.addMarker(markerOptions);
+                position = marker.getPosition();
+                String positionString = "" + position.latitude + "\n" + position.longitude;
+                positionView.setText(positionString);
+            }
+        });
 
-        // Check for permissions
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Please enable location for this app", Toast.LENGTH_SHORT).show();
             finish();
@@ -93,48 +104,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .zoom(15)                   // Sets the zoom
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            position = new LatLng(location.getLatitude(), location.getLongitude());
+            String positionString = "" + position.latitude + "\n" + position.longitude;
+            positionView.setText(positionString);
+            Log.i("OnCreate() lastknownloc",positionString);
         }
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                Event loadEvent = markerMap.get(marker);
-
-                marker.showInfoWindow();
-
-                titleView.setText(loadEvent.getName());
-
-                descriptionView.setText(loadEvent.getDescription());
-
-                LocalDateTime dueDateTime = LocalDateTime.ofInstant(loadEvent.getDueDate(), ZoneOffset.UTC);
-                LocalDateTime curDateTime = LocalDateTime.now(ZoneOffset.systemDefault());
-
-                String dueDate = "" + dueDateTime.getMonth().toString()
-                        + " " + ((Integer)dueDateTime.getDayOfMonth()).toString()
-                        + " at " + ((Integer)dueDateTime.getHour()).toString()
-                        + ":" + ((Integer)dueDateTime.getMinute()).toString();
-                dueDateView.setText(dueDate);
-
-                return true;
-            }
-        });
-
-        placeMarkers();
-    }
-
-    public void placeMarkers() {
-        mMap.clear();
-        for (Event event: userEvents)
-        {
-            Double lat = event.getLatitude();
-            Double lng = event.getLongitude();
-
-            LatLng latlng = new LatLng(lat,lng);
-            MarkerOptions markerOptions = new MarkerOptions().position(latlng).title(event.getName());
-            Marker marker = mMap.addMarker(markerOptions);
-            marker.setSnippet(event.getDescription());
-
-            markerMap.put(marker, event);
-        }
+        // Add a marker in Sydney and move the camera
+        //LatLng sydney = new LatLng(-34, 151);
+        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
